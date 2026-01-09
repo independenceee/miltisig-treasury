@@ -6,8 +6,6 @@ pub type Datum {
     signers: List<Address> 
 }
 
-
-
 pub type Redeemer {
     Deposit
     Execute
