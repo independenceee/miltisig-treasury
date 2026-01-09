@@ -28,7 +28,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
     jest.setTimeout(600000000);
 
     test("Deposit", async function () {
-        // return;
+        return;
 
         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
@@ -36,9 +36,9 @@ describe("A multisig treasury is a shared fund where spending requires approval 
         });
 
         const unsignedTx: string = await meshTxBuilder.deposit({
-            name: "Aiken Course 2025",
+            name: "Aiken Course 2024",
             quantity: "100000000",
-            receiver: meshWallet.getChangeAddress(),
+            receiver: "addr_test1qz45qtdupp8g30lzzr684m8mc278s284cjvawna5ypwkvq7s8xszw9mgmwpxdyakl7dgpfmzywctzlsaghnqrl494wnqhgsy3g",
             owners: [
                 "addr_test1qz45qtdupp8g30lzzr684m8mc278s284cjvawna5ypwkvq7s8xszw9mgmwpxdyakl7dgpfmzywctzlsaghnqrl494wnqhgsy3g",
                 "addr_test1qr39uar0u87xrmptw0f8ryx5mp3scvc3pkehp57yj5zhugxdgese6p77sy9hk0rqc5wqd6n8vmfyqq9f7sdfz9dm0azqzmmdew",
@@ -47,8 +47,6 @@ describe("A multisig treasury is a shared fund where spending requires approval 
                 "addr_test1qpm9a92nk6grxwsxluqyjt9xd3cjcps90fjv8txm4spd6tv4mkujqpc7fzlvqu40kyvzh6fxmqp0578uk564ffqtfr7s9ppr9y",
             ],
         });
-
-        return
 
         const signedTx = await meshWallet.signTx(unsignedTx, true);
         const txHash = await meshWallet.submitTx(signedTx);
@@ -60,7 +58,47 @@ describe("A multisig treasury is a shared fund where spending requires approval 
         });
     });
 
-    test("Execute", async function () {});
+    test("Execute", async function () {
+        // return;
 
-    test("Signature", async function () {});
+        const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
+            meshWallet: meshWallet,
+            threshold: 2,
+        });
+
+        const unsignedTx: string = await meshTxBuilder.execute({
+            name: "Aiken Course 2024",
+        });
+
+        const signedTx = await meshWallet.signTx(unsignedTx, true);
+        const txHash = await meshWallet.submitTx(signedTx);
+        await new Promise<void>(function (resolve) {
+            blockfrostProvider.onTxConfirmed(txHash, () => {
+                console.log("https://preview.cexplorer.io/tx/" + txHash);
+                resolve();
+            });
+        });
+    });
+
+    test("Signature", async function () {
+        return;
+
+        const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
+            meshWallet: meshWallet,
+            threshold: 2,
+        });
+
+        const unsignedTx: string = await meshTxBuilder.signature({
+            name: "Aiken Course 2024",
+        });
+
+        const signedTx = await meshWallet.signTx(unsignedTx, true);
+        const txHash = await meshWallet.submitTx(signedTx);
+        await new Promise<void>(function (resolve) {
+            blockfrostProvider.onTxConfirmed(txHash, () => {
+                console.log("https://preview.cexplorer.io/tx/" + txHash);
+                resolve();
+            });
+        });
+    });
 });
