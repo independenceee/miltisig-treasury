@@ -38,7 +38,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
         });
 
         const unsignedTx: string = await meshTxBuilder.deposit({
-            name: "Aiken Course 2025",
+            name: "Aiken Course 2024",
             quantity: "100000000",
             receiver: "addr_test1qz45qtdupp8g30lzzr684m8mc278s284cjvawna5ypwkvq7s8xszw9mgmwpxdyakl7dgpfmzywctzlsaghnqrl494wnqhgsy3g",
             owners: [
@@ -61,7 +61,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
     });
 
     test("Execute", async function () {
-        // return;
+        return;
 
         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
@@ -84,7 +84,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
     });
 
     test("Signature", async function () {
-        return;
+        // return;
 
         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
@@ -93,7 +93,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
         });
 
         const unsignedTx: string = await meshTxBuilder.signature({
-            name: "Aiken Course 2024",
+            name: "Aiken Course 2025",
         });
 
         const signedTx = await meshWallet.signTx(unsignedTx, true);
