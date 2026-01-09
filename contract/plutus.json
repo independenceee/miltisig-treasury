@@ -1,0 +1,253 @@
+{
+  "preamble": {
+    "title": "cardano2vn/contract",
+    "description": "Aiken contracts for project 'cardano2vn/contract'",
+    "version": "0.0.0",
+    "plutusVersion": "v3",
+    "compiler": {
+      "name": "Aiken",
+      "version": "v1.1.21+42babe5"
+    },
+    "license": "Apache-2.0"
+  },
+  "validators": [
+    {
+      "title": "treasury.treasury.spend",
+      "datum": {
+        "title": "datum_option",
+        "schema": {
+          "$ref": "#/definitions/contract~1types~1Datum"
+        }
+      },
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/contract~1types~1Redeemer"
+        }
+      },
+      "parameters": [
+        {
+          "title": "threshold",
+          "schema": {
+            "$ref": "#/definitions/Int"
+          }
+        }
+      ],
+      "compiledCode": "58ea010100229800aba2aba1aab9faab9eaab9dab9a9bad002488888896600264653001300800198041804800cdc3a400530080024888966002600460126ea800e26466453001159800980098061baa002899912cc004c00c00629462b300130070018a518a5140348068c03cc034dd500118061baa0078b201698061baa0079807801a444b300130040028acc004c040dd5005400e2c808a2b300130080028acc004c040dd5005400e2c808a2b30013370e9002001456600260206ea802a007164045164038807100e0c034c038004dc3a400060146ea800e2c8040601000260086ea802229344d95900201",
+      "hash": "9f51dbf82ca1c4c50dfd27ae3b51592bbaef03c05994c00fd39a382d"
+    },
+    {
+      "title": "treasury.treasury.else",
+      "redeemer": {
+        "schema": {}
+      },
+      "parameters": [
+        {
+          "title": "threshold",
+          "schema": {
+            "$ref": "#/definitions/Int"
+          }
+        }
+      ],
+      "compiledCode": "58ea010100229800aba2aba1aab9faab9eaab9dab9a9bad002488888896600264653001300800198041804800cdc3a400530080024888966002600460126ea800e26466453001159800980098061baa002899912cc004c00c00629462b300130070018a518a5140348068c03cc034dd500118061baa0078b201698061baa0079807801a444b300130040028acc004c040dd5005400e2c808a2b300130080028acc004c040dd5005400e2c808a2b30013370e9002001456600260206ea802a007164045164038807100e0c034c038004dc3a400060146ea800e2c8040601000260086ea802229344d95900201",
+      "hash": "9f51dbf82ca1c4c50dfd27ae3b51592bbaef03c05994c00fd39a382d"
+    }
+  ],
+  "definitions": {
+    "Int": {
+      "dataType": "integer"
+    },
+    "List<cardano/address/Address>": {
+      "dataType": "list",
+      "items": {
+        "$ref": "#/definitions/cardano~1address~1Address"
+      }
+    },
+    "Option<cardano/address/StakeCredential>": {
+      "title": "Option",
+      "anyOf": [
+        {
+          "title": "Some",
+          "description": "An optional value.",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "$ref": "#/definitions/cardano~1address~1StakeCredential"
+            }
+          ]
+        },
+        {
+          "title": "None",
+          "description": "Nothing.",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        }
+      ]
+    },
+    "aiken/crypto/ScriptHash": {
+      "title": "ScriptHash",
+      "dataType": "bytes"
+    },
+    "aiken/crypto/VerificationKeyHash": {
+      "title": "VerificationKeyHash",
+      "dataType": "bytes"
+    },
+    "cardano/address/Address": {
+      "title": "Address",
+      "description": "A Cardano `Address` typically holding one or two credential references.\n\n Note that legacy bootstrap addresses (a.k.a. 'Byron addresses') are\n completely excluded from Plutus contexts. Thus, from an on-chain\n perspective only exists addresses of type 00, 01, ..., 07 as detailed\n in [CIP-0019 :: Shelley Addresses](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0019/#shelley-addresses).",
+      "anyOf": [
+        {
+          "title": "Address",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "payment_credential",
+              "$ref": "#/definitions/cardano~1address~1PaymentCredential"
+            },
+            {
+              "title": "stake_credential",
+              "$ref": "#/definitions/Option<cardano~1address~1StakeCredential>"
+            }
+          ]
+        }
+      ]
+    },
+    "cardano/address/Credential": {
+      "title": "Credential",
+      "description": "A general structure for representing an on-chain `Credential`.\n\n Credentials are always one of two kinds: a direct public/private key\n pair, or a script (native or Plutus).",
+      "anyOf": [
+        {
+          "title": "VerificationKey",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "$ref": "#/definitions/aiken~1crypto~1VerificationKeyHash"
+            }
+          ]
+        },
+        {
+          "title": "Script",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": [
+            {
+              "$ref": "#/definitions/aiken~1crypto~1ScriptHash"
+            }
+          ]
+        }
+      ]
+    },
+    "cardano/address/PaymentCredential": {
+      "title": "PaymentCredential",
+      "description": "A general structure for representing an on-chain `Credential`.\n\n Credentials are always one of two kinds: a direct public/private key\n pair, or a script (native or Plutus).",
+      "anyOf": [
+        {
+          "title": "VerificationKey",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "$ref": "#/definitions/aiken~1crypto~1VerificationKeyHash"
+            }
+          ]
+        },
+        {
+          "title": "Script",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": [
+            {
+              "$ref": "#/definitions/aiken~1crypto~1ScriptHash"
+            }
+          ]
+        }
+      ]
+    },
+    "cardano/address/StakeCredential": {
+      "title": "StakeCredential",
+      "description": "Represent a type of object that can be represented either inline (by hash)\n or via a reference (i.e. a pointer to an on-chain location).\n\n This is mainly use for capturing pointers to a stake credential\n registration certificate in the case of so-called pointer addresses.",
+      "anyOf": [
+        {
+          "title": "Inline",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "$ref": "#/definitions/cardano~1address~1Credential"
+            }
+          ]
+        },
+        {
+          "title": "Pointer",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": [
+            {
+              "title": "slot_number",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "transaction_index",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "certificate_index",
+              "$ref": "#/definitions/Int"
+            }
+          ]
+        }
+      ]
+    },
+    "contract/types/Datum": {
+      "title": "Datum",
+      "anyOf": [
+        {
+          "title": "Datum",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "receiver",
+              "$ref": "#/definitions/cardano~1address~1Address"
+            },
+            {
+              "title": "owners",
+              "$ref": "#/definitions/List<cardano~1address~1Address>"
+            },
+            {
+              "title": "signers",
+              "$ref": "#/definitions/List<cardano~1address~1Address>"
+            }
+          ]
+        }
+      ]
+    },
+    "contract/types/Redeemer": {
+      "title": "Redeemer",
+      "anyOf": [
+        {
+          "title": "Deposit",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": []
+        },
+        {
+          "title": "Execute",
+          "dataType": "constructor",
+          "index": 1,
+          "fields": []
+        },
+        {
+          "title": "Signature",
+          "dataType": "constructor",
+          "index": 2,
+          "fields": []
+        }
+      ]
+    }
+  }
+}
