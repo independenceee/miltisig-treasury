@@ -15,7 +15,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
 
     beforeEach(async function () {
         meshWallet = new MeshWallet({
-            accountIndex: 1,
+            accountIndex: 3,
             networkId: APP_NETWORK_ID,
             fetcher: blockfrostProvider,
             submitter: blockfrostProvider,
@@ -29,7 +29,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
     jest.setTimeout(600000000);
 
     test("Deposit", async function () {
-        return;
+        // return;
 
         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
@@ -38,8 +38,8 @@ describe("A multisig treasury is a shared fund where spending requires approval 
         });
 
         const unsignedTx: string = await meshTxBuilder.deposit({
-            name: "Aiken Course 2024",
-            quantity: "100000000",
+            name: "Aiken Course 2021",
+            quantity: "10000000",
             receiver: "addr_test1qz45qtdupp8g30lzzr684m8mc278s284cjvawna5ypwkvq7s8xszw9mgmwpxdyakl7dgpfmzywctzlsaghnqrl494wnqhgsy3g",
             owners: [
                 "addr_test1qz45qtdupp8g30lzzr684m8mc278s284cjvawna5ypwkvq7s8xszw9mgmwpxdyakl7dgpfmzywctzlsaghnqrl494wnqhgsy3g",
@@ -84,7 +84,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
     });
 
     test("Signature", async function () {
-        return;
+        // return;
 
         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
@@ -93,7 +93,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
         });
 
         const unsignedTx: string = await meshTxBuilder.signature({
-            name: "Aiken Course 2024",
+            name: "Aiken Course 2021",
         });
 
         const signedTx = await meshWallet.signTx(unsignedTx, true);

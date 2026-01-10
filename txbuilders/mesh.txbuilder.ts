@@ -104,7 +104,7 @@ export class MeshTxBuilder extends MeshAdapter {
                 .spendingPlutusScriptV3()
                 .txIn(utxo.input.txHash, utxo.input.outputIndex)
                 .txInInlineDatumPresent()
-                .txInRedeemerValue(mConStr1([]))
+                .txInRedeemerValue(mConStr2([]))
                 .txInScript(this.spendScriptCbor)
                 .txOut(this.spendAddress, utxo.output.amount)
                 .txOutInlineDatumValue(
@@ -155,7 +155,7 @@ export class MeshTxBuilder extends MeshAdapter {
                 .spendingPlutusScriptV3()
                 .txIn(utxo.input.txHash, utxo.input.outputIndex)
                 .txInInlineDatumPresent()
-                .txInRedeemerValue(mConStr2([]))
+                .txInRedeemerValue(mConStr1([]))
                 .txInScript(this.spendScriptCbor)
 
                 .txOut(datum.receiver, [
