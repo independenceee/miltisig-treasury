@@ -1,7 +1,8 @@
+use aiken/crypto.{VerificationKeyHash}
 use cardano/address.{Address}
 
 pub type Datum {
-  receiver: Address,
+  receiver: Int,
   owners: List<Address>,
   signers: List<Address>,
 }
