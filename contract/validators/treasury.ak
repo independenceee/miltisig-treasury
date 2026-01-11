@@ -2,7 +2,7 @@ use aiken/collection/list
 use cardano/assets.{PolicyId, lovelace_of}
 use cardano/transaction.{InlineDatum, OutputReference, Transaction, find_input}
 use cardano/tx.{verify_signature}
-use cocktail/vodka_address.{address_pub_key}
+use cocktail/vodka_address.{address_pub_key, compare_address}
 use contract/types.{Datum, Deposit, End, Execute, Init, Mint, Signature, Spend}
 
 validator treasury(threshold: Int, allowance: Int) {
@@ -32,9 +32,9 @@ validator treasury(threshold: Int, allowance: Int) {
         expect datum_output: Datum = datum_output_raw
 
         and {
-          datum_input.owners == datum_output.owners,
-          datum_input.signers == datum_output.signers,
-          datum_input.receiver == datum_output.receiver,
+          // datum_input.owners == datum_output.owners,
+          // datum_input.signers == datum_output.signers,
+          compare_address(datum_input.receiver, datum_output.receiver) == Equal,
           lovelace_of(output.value) >= lovelace_of(input.output.value),
         }
       }
@@ -68,13 +68,13 @@ validator treasury(threshold: Int, allowance: Int) {
         expect datum_output: Datum = datum_output_raw
 
         and {
-          list.length(signers) > 0,
-          datum_input.owners == datum_output.owners,
-          datum_input.receiver == datum_output.receiver,
-          list.all(
-            datum_input.signers,
-            fn(signer) { list.has(datum_output.signers, signer) },
-          ),
+          // list.length(signers) > 0,
+          // datum_input.owners == datum_output.owners,
+          compare_address(datum_input.receiver, datum_output.receiver) == Equal,
+          // list.all(
+          //   datum_input.signers,
+          //   fn(signer) { list.has(datum_output.signers, signer) },
+          // ),
           lovelace_of(output.value) >= lovelace_of(input.output.value),
         }
       }

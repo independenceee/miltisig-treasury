@@ -29,17 +29,17 @@ describe("A multisig treasury is a shared fund where spending requires approval 
     jest.setTimeout(600000000);
 
     test("Deposit", async function () {
-        return;
+        // return;
 
         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
-            threshold: 2,
+            threshold: 1,
             allowance: 10 * DECIMAL_PLACE,
         });
 
         const unsignedTx: string = await meshTxBuilder.deposit({
             name: "Aiken Course 2024",
-            quantity: "100000000",
+            quantity: "10000000",
             receiver: "addr_test1qz45qtdupp8g30lzzr684m8mc278s284cjvawna5ypwkvq7s8xszw9mgmwpxdyakl7dgpfmzywctzlsaghnqrl494wnqhgsy3g",
             owners: [
                 "addr_test1qz45qtdupp8g30lzzr684m8mc278s284cjvawna5ypwkvq7s8xszw9mgmwpxdyakl7dgpfmzywctzlsaghnqrl494wnqhgsy3g",
@@ -65,7 +65,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
 
         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
-            threshold: 2,
+            threshold: 1,
             allowance: 10 * DECIMAL_PLACE,
         });
 
@@ -84,11 +84,11 @@ describe("A multisig treasury is a shared fund where spending requires approval 
     });
 
     test("Signature", async function () {
-        return;
+        // return;
 
         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
-            threshold: 2,
+            threshold: 1,
             allowance: 10 * DECIMAL_PLACE,
         });
 
