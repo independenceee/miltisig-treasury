@@ -47,7 +47,7 @@ validator treasury(threshold: Int, allowance: Int) {
         when list.length(datum_input.signers) >= threshold is {
           True -> {
             let output_receiver = output_by_addr(outputs, datum_input.receiver)
-            when lovelace_of(input.output.value) <= allowance is {
+            when lovelace_of(input.output.value) >= allowance is {
               True ->
                 if lovelace_of(input.output.value) == allowance {
                   lovelace_of(output_receiver.value) == allowance
