@@ -50,7 +50,7 @@ export class MeshTxBuilder extends MeshAdapter {
                             mPubKeyAddress(deserializeAddress(owner).pubKeyHash, deserializeAddress(owner).stakeCredentialHash),
                         ),
                         datum.signers!.map((signer) =>
-                            mPubKeyAddress(deserializeAddress(signer).pubKeyHash, deserializeAddress(signer).stakeCredentialHash),
+                            mPubKeyAddress(deserializeAddress(signer!).pubKeyHash, deserializeAddress(signer).stakeCredentialHash),
                         ),
                     ]),
                 );
@@ -110,13 +110,15 @@ export class MeshTxBuilder extends MeshAdapter {
                 .txOut(this.spendAddress, utxo.output.amount)
                 .txOutInlineDatumValue(
                     mConStr0([
-                        mConStr0([deserializeAddress(datum.receiver!).pubKeyHash, deserializeAddress(datum.receiver!).stakeCredentialHash]),
-                        datum.owners!.map((owner) => mConStr0([deserializeAddress(owner).pubKeyHash, deserializeAddress(owner).stakeCredentialHash])),
+                        mPubKeyAddress(deserializeAddress(datum.receiver!).pubKeyHash, deserializeAddress(datum.receiver!).stakeCredentialHash),
+                        datum.owners!.map((owner) =>
+                            mPubKeyAddress(deserializeAddress(owner).pubKeyHash, deserializeAddress(owner).stakeCredentialHash),
+                        ),
                         [
                             ...datum.signers!.map((signer) =>
-                                mConStr0([deserializeAddress(signer).pubKeyHash, deserializeAddress(signer).stakeCredentialHash]),
+                                mPubKeyAddress(deserializeAddress(signer).pubKeyHash, deserializeAddress(signer).stakeCredentialHash),
                             ),
-                            mConStr0([deserializeAddress(walletAddress).pubKeyHash, deserializeAddress(walletAddress).stakeCredentialHash]),
+                            mPubKeyAddress(deserializeAddress(walletAddress).pubKeyHash, deserializeAddress(walletAddress).stakeCredentialHash),
                         ],
                     ]),
                 );
@@ -133,7 +135,7 @@ export class MeshTxBuilder extends MeshAdapter {
         return await unsignedTx.complete();
     };
 
-    execute = async ({ name }: { name: string }): Promise<string> => {
+    execute = async ({ name, amount }: { name: string; amount: string }): Promise<string> => {
         const { utxos, walletAddress, collateral } = await this.getWalletForTx();
 
         const unsignedTx = this.meshTxBuilder;
