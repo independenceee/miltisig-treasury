@@ -8,7 +8,7 @@ use contract/types.{
 }
 use validation/find.{output_by_addr, output_by_addr_value}
 
-validator treasury(threshold: Int, allowance: Int) {
+validator multisig_treasury(threshold: Int, allowance: Int) {
   mint(redeemer: Mint, _policy_id: PolicyId, _transaction: Transaction) {
     when redeemer is {
       Init -> True
@@ -54,7 +54,7 @@ validator treasury(threshold: Int, allowance: Int) {
                 } else {
                   let output = output_by_addr(outputs, script_address)
                   expect InlineDatum(datum_output_raw) = output.datum
-                  expect datum_output: Datum = datum_output_raw
+                  expect datum_output: TreasuryDatum = datum_output_raw
 
                   and {
                     lovelace_of(output_receiver.value) == allowance,

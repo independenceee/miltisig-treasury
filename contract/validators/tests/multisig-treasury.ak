@@ -1,15 +1,13 @@
 use cardano/address.{Address}
 use cardano/assets.{AssetName, PolicyId, add, from_asset, from_lovelace}
 use cardano/transaction.{InlineDatum, Input, Transaction}
-use contract/types.{
-  Deposit, Execute, Signature, Spend, TreasuryDatum,
-}
+use contract/types.{Deposit, Execute, Signature, Spend, TreasuryDatum}
 use mocktail.{
   add_input, complete, mint, mock_policy_id, mock_pub_key_address,
-  mock_pub_key_hash, mock_script_address, mock_script_output,
-  mock_utxo_ref, mocktail_tx, required_signer_hash, tx_out, tx_out_inline_datum,
+  mock_pub_key_hash, mock_script_address, mock_script_output, mock_utxo_ref,
+  mocktail_tx, required_signer_hash, tx_out, tx_out_inline_datum,
 }
-use treasury as treasury_validator
+use multisig_treasury
 
 test success_deposit() {
   let redeemer: Spend = Deposit
@@ -88,7 +86,7 @@ test success_deposit() {
           },
         )
 
-  treasury_validator.treasury.spend(
+  multisig_treasury.multisig_treasury.spend(
     threshold,
     allowance,
     Some(datum_input),
@@ -147,7 +145,7 @@ test success_execute() {
           },
         )
 
-  treasury_validator.treasury.spend(
+  multisig_treasury.multisig_treasury.spend(
     threshold,
     allowance,
     Some(datum_input),
@@ -195,13 +193,7 @@ test success_execute_allowance() {
   let owner3_output: Address = mock_pub_key_address(3, None)
   let owners_output: List<Address> =
     [owner1_output, owner2_output, owner3_output]
-
-  let signer1_output: Address = mock_pub_key_address(1, None)
-  let signer2_output: Address = mock_pub_key_address(2, None)
-  let signer3_output: Address = mock_pub_key_address(3, None)
-  let signers_output: List<Address> =
-    [signer1_output, signer2_output, signer3_output]
-
+  let signers_output: List<Address> = []
   let datum_output =
     TreasuryDatum {
       receiver: receiver_output,
@@ -218,11 +210,7 @@ test success_execute_allowance() {
             |> add("", "", 10_000_000),
         )
       |> tx_out_inline_datum(True, datum_output)
-      |> tx_out(
-          True,
-          receiver_input,
-          from_lovelace(10_000_000),
-        )
+      |> tx_out(True, receiver_input, from_lovelace(10_000_000))
       |> required_signer_hash(True, mock_pub_key_hash(3))
       |> complete()
       |> add_input(
@@ -238,7 +226,7 @@ test success_execute_allowance() {
           },
         )
 
-  treasury_validator.treasury.spend(
+  multisig_treasury.multisig_treasury.spend(
     threshold,
     allowance,
     Some(datum_input),
@@ -322,7 +310,7 @@ test success_signatory() {
           },
         )
 
-  treasury_validator.treasury.spend(
+  multisig_treasury.multisig_treasury.spend(
     threshold,
     allowance,
     Some(datum_input),
