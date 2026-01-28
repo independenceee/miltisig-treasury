@@ -242,7 +242,6 @@ export class MeshAdapter {
     } => {
         try {
             const datum = deserializeDatum(plutusData);
-            console.dir(datum, { depth: null, colors: true }); // giữ nếu cần debug
 
             const buildAddress = (paymentHex: string, stakeHex?: string): string => {
                 if (typeof paymentHex !== "string" || paymentHex.length !== 56) {
@@ -254,7 +253,6 @@ export class MeshAdapter {
                 return serializeAddressObj(pubKeyAddress(paymentHex, stakeHex || "", false), APP_NETWORK_ID);
             };
 
-            // 1. Receiver - theo đúng nesting thực tế
             const receiverPayment = datum.fields?.[0]?.fields?.[0]?.fields?.[0]?.bytes;
             const receiverStake = datum.fields?.[0]?.fields?.[1]?.fields?.[0]?.fields?.[0]?.fields?.[0]?.bytes;
 
@@ -264,7 +262,6 @@ export class MeshAdapter {
 
             const receiver = buildAddress(receiverPayment, receiverStake);
 
-            // 2. Owners - path chính xác theo datum thực tế
             const ownersList = datum.fields?.[1]?.list || [];
             const owners = ownersList.map((item: any, index: number) => {
                 const payment = item?.fields?.[0]?.fields?.[0]?.bytes;
@@ -274,10 +271,9 @@ export class MeshAdapter {
                     throw new Error(`Owner #${index + 1} missing payment (path: fields[0].fields[0].bytes)`);
                 }
 
-                return buildAddress(payment, stake); // stake optional → nếu undefined thì enterprise addr
+                return buildAddress(payment, stake);
             });
 
-            // 3. Signers - path tương tự owners (list rỗng thì trả [])
             const signersList = datum.fields?.[2]?.list || [];
             const signers = signersList.map((item: any, index: number) => {
                 const payment = item?.fields?.[0]?.fields?.[0]?.bytes;
@@ -292,7 +288,6 @@ export class MeshAdapter {
 
             return { receiver, owners, signers };
         } catch (err) {
-            console.error("Datum parsing failed:", err);
             throw new Error(`Invalid Plutus datum: ${err instanceof Error ? err.message : String(err)}`);
         }
     };
