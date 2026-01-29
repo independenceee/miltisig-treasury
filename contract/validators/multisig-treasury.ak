@@ -1,23 +1,17 @@
 use aiken/collection/list
-use cardano/assets.{PolicyId, lovelace_of, without_lovelace}
+use cardano/assets.{AssetName, lovelace_of, without_lovelace}
 use cardano/transaction.{InlineDatum, OutputReference, Transaction, find_input}
 use cardano/tx.{verify_signature}
 use cocktail/vodka_address.{address_pub_key}
-use contract/types.{
-  Deposit, End, Execute, Init, Mint, Signature, Spend, TreasuryDatum,
-}
+use contract/types.{Datum, Deposit, Execute, Signature, Spend}
 use validation/find.{output_by_addr, output_by_addr_value}
 
-validator multisig_treasury(threshold: Int, allowance: Int) {
-  mint(redeemer: Mint, _policy_id: PolicyId, _transaction: Transaction) {
-    when redeemer is {
-      Init -> True
-      End -> True
-    }
-  }
-
+validator multisig_treasury(
+  threshold: Int,
+  allowance: Int,
+) {
   spend(
-    datum_option: Option<TreasuryDatum>,
+    datum_option: Option<Datum>,
     redeemer: Spend,
     output_reference: OutputReference,
     transaction: Transaction,
@@ -34,7 +28,7 @@ validator multisig_treasury(threshold: Int, allowance: Int) {
       Deposit -> {
         let output = output_by_addr_value(outputs, script_address, token)
         expect InlineDatum(datum_output_raw) = output.datum
-        expect datum_output: TreasuryDatum = datum_output_raw
+        expect datum_output: Datum = datum_output_raw
 
         and {
           datum_input.owners == datum_output.owners,
@@ -54,7 +48,7 @@ validator multisig_treasury(threshold: Int, allowance: Int) {
                 } else {
                   let output = output_by_addr(outputs, script_address)
                   expect InlineDatum(datum_output_raw) = output.datum
-                  expect datum_output: TreasuryDatum = datum_output_raw
+                  expect datum_output: Datum = datum_output_raw
 
                   and {
                     lovelace_of(output_receiver.value) == allowance,
@@ -87,7 +81,7 @@ validator multisig_treasury(threshold: Int, allowance: Int) {
             },
           )
         expect InlineDatum(inline_datum_output) = output.datum
-        expect datum_output: TreasuryDatum = inline_datum_output
+        expect datum_output: Datum = inline_datum_output
         and {
           list.length(new_signers) > 0,
           datum_input.owners == datum_output.owners,

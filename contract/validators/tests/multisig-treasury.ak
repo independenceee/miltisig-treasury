@@ -1,7 +1,7 @@
 use cardano/address.{Address}
 use cardano/assets.{AssetName, PolicyId, add, from_asset, from_lovelace}
 use cardano/transaction.{InlineDatum, Input, Transaction}
-use contract/types.{Deposit, Execute, Signature, Spend, TreasuryDatum}
+use contract/types.{Datum, Deposit, Execute, Signature, Spend}
 use mocktail.{
   add_input, complete, mint, mock_policy_id, mock_pub_key_address,
   mock_pub_key_hash, mock_script_address, mock_script_output, mock_utxo_ref,
@@ -33,7 +33,7 @@ test success_deposit() {
     [signer1_input, signer2_input, signer3_input]
 
   let datum_input =
-    TreasuryDatum {
+    Datum {
       receiver: receiver_input,
       owners: owners_input,
       signers: signers_input,
@@ -55,7 +55,7 @@ test success_deposit() {
     [signer1_output, signer2_output, signer3_output]
 
   let datum_output =
-    TreasuryDatum {
+    Datum {
       receiver: receiver_output,
       owners: owners_output,
       signers: signers_output,
@@ -120,7 +120,7 @@ test success_execute() {
     [signer1_input, signer2_input, signer3_input]
 
   let datum_input =
-    TreasuryDatum {
+    Datum {
       receiver: receiver_input,
       owners: owners_input,
       signers: signers_input,
@@ -179,7 +179,7 @@ test success_execute_allowance() {
     [signer1_input, signer2_input, signer3_input]
 
   let datum_input =
-    TreasuryDatum {
+    Datum {
       receiver: receiver_input,
       owners: owners_input,
       signers: signers_input,
@@ -195,7 +195,7 @@ test success_execute_allowance() {
     [owner1_output, owner2_output, owner3_output]
   let signers_output: List<Address> = []
   let datum_output =
-    TreasuryDatum {
+    Datum {
       receiver: receiver_output,
       owners: owners_output,
       signers: signers_output,
@@ -258,7 +258,7 @@ test success_signatory() {
   let signers_input: List<Address> = [signer1_input, signer2_input]
 
   let datum_input =
-    TreasuryDatum {
+    Datum {
       receiver: receiver_input,
       owners: owners_input,
       signers: signers_input,
@@ -280,7 +280,7 @@ test success_signatory() {
     [signer1_output, signer2_output, signer3_output]
 
   let datum_output =
-    TreasuryDatum {
+    Datum {
       receiver: receiver_output,
       owners: owners_output,
       signers: signers_output,

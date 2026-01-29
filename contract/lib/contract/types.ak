@@ -1,6 +1,6 @@
 use cardano/address.{Address}
 
-pub type TreasuryDatum {
+pub type Datum {
   receiver: Address,
   owners: List<Address>,
   signers: List<Address>,
