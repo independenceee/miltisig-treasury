@@ -1,6 +1,6 @@
 import { MeshAdapter } from "../adapters/mesh.adapter";
 import { APP_NETWORK } from "../constants/enviroments.constant";
-import { deserializeAddress, pubKeyAddress, mConStr0, mConStr1, mConStr2, stringToHex, mPubKeyAddress } from "@meshsdk/core";
+import { deserializeAddress, mConStr0, mConStr1, mConStr2, stringToHex, mPubKeyAddress } from "@meshsdk/core";
 
 export class MeshTxBuilder extends MeshAdapter {
     init = async ({ receiver, owners }: { receiver: string; owners: Array<string> }): Promise<string> => {
