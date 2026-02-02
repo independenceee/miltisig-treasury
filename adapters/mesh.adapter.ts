@@ -86,7 +86,7 @@ export class MeshAdapter {
         this.spendAddress = serializeAddressObj(
             scriptAddress(
                 deserializeAddress(serializePlutusScript(this.spendScript, undefined, APP_NETWORK_ID, false).address).scriptHash,
-                deserializeAddress(APP_WALLET_ADDRESS).scriptHash,
+                "",
                 false,
             ),
             APP_NETWORK_ID,
@@ -240,7 +240,7 @@ export class MeshAdapter {
      * @throws {Error}
      *         If UTxOs or wallet address cannot be retrieved.
      */
-    protected convertDatum = ({
+    public convertDatum = ({
         plutusData,
     }: {
         plutusData: string;

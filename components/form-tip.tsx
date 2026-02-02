@@ -4,12 +4,9 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Wallet } from "./icons";
 import { useWallet } from "@/hooks/use-wallet";
-import { commit, getBalanceTip, getBalanceCommit, send, submitHydraTx } from "@/services/hydra.service";
 import { Button } from "./ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { DECIMAL_PLACE } from "@/constants/common";
-import toast from "react-hot-toast";
-import { getUTxOOnlyLovelace, submitTx } from "@/services/mesh.service";
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -23,14 +20,10 @@ import {
 } from "./ui/alert-dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CommitSchema, TipSchema } from "@/lib/schema";
 import z from "zod";
 import Image from "next/image";
 import { images } from "@/public/images";
 import CountUp from "react-countup";
-
-type Commit = z.infer<typeof CommitSchema>;
-type TipForm = z.infer<typeof TipSchema>;
 
 const FormTip = function ({ tipAddress }: { tipAddress: string }) {
     const { address, signTx } = useWallet();
@@ -38,182 +31,6 @@ const FormTip = function ({ tipAddress }: { tipAddress: string }) {
     const [amount, setAmount] = useState<string>("");
     const queryClient = useQueryClient();
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors, isSubmitting },
-        setValue,
-    } = useForm<Commit>({
-        resolver: zodResolver(CommitSchema),
-        defaultValues: {
-            txHash: "",
-            outputIndex: 0,
-            amount: 0,
-        },
-    });
-
-    const {
-        register: registerSend,
-        handleSubmit: handleSubmitSend,
-        formState: { errors: errorsSend, isSubmitting: isSubmittingSend },
-        setValue: setValueSend,
-    } = useForm<TipForm>({
-        resolver: zodResolver(TipSchema),
-        defaultValues: {
-            amount: 0,
-        },
-    });
-
-    const { data: balanceTip, isLoading: isLoadingBalance } = useQuery({
-        queryKey: ["balance-tip", tipAddress],
-        queryFn: () => getBalanceTip({ walletAddress: tipAddress }),
-        enabled: !!tipAddress,
-        staleTime: 0,
-    });
-
-    const { data: balanceCommit, isLoading: isLoadingBalanceCommit } = useQuery({
-        queryKey: ["balance-commit", address],
-        queryFn: () => getBalanceCommit({ walletAddress: address as string }),
-        enabled: !!address,
-        staleTime: 0,
-    });
-
-    const { data: dataUTxOOnlyLovelace, isLoading: isLoadingUTxOOnlyLovelace } = useQuery({
-        queryKey: ["utxos", address],
-        queryFn: () => getUTxOOnlyLovelace({ walletAddress: address as string, quantity: DECIMAL_PLACE * 10 }),
-        enabled: !!address,
-        staleTime: 0,
-    });
-
-    const { data: adaPrice } = useQuery({
-        queryKey: ["adaPrice"],
-        queryFn: async () => {
-            const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=cardano&vs_currencies=usd");
-            const data = await response.json();
-            return data.cardano.usd;
-        },
-        enabled: true,
-    });
-
-    const onSubmitCommit = useCallback(
-        async function (data: Commit) {
-            try {
-                if (!address) {
-                    toast.error("Please connect your wallet");
-                    return;
-                }
-                const unsignedTx = await commit({
-                    walletAddress: address,
-                    input: {
-                        txHash: data.txHash,
-                        outputIndex: data.outputIndex,
-                    },
-                    isCreator: false,
-                });
-                if (typeof unsignedTx !== "string") {
-                    throw new Error("Invalid transaction format");
-                }
-                const signedTx = await signTx(unsignedTx);
-                if (typeof signedTx !== "string") {
-                    throw new Error("Invalid signed transaction format");
-                }
-                await submitTx({ signedTx });
-                toast.success("Commitment successful!");
-                queryClient.invalidateQueries({ queryKey: ["status", tipAddress] });
-            } catch (error) {
-                console.error("Commitment failed:", error);
-                toast.error("Failed to commit. Please try again.");
-            }
-        },
-        [address, signTx, queryClient, tipAddress],
-    );
-
-    const onSubmitSend = useCallback(
-        async function (data: TipForm) {
-            try {
-                if (!address) {
-                    toast.error("Please connect your wallet");
-                    return;
-                }
-                if (data.amount <= 0) {
-                    toast.error("Please enter a valid amount");
-                    return;
-                }
-
-                if ((balanceCommit as number) / DECIMAL_PLACE <= data.amount) {
-                    toast.error("Please enter a valid amount");
-                    return;
-                }
-                const unsignedTx = await send({
-                    walletAddress: address,
-                    amount: data.amount,
-                    tipAddress: tipAddress,
-                    isCreator: false,
-                });
-                if (typeof unsignedTx !== "string") {
-                    throw new Error("Invalid transaction format");
-                }
-                const signedTx = await signTx(unsignedTx);
-                if (typeof signedTx !== "string") {
-                    throw new Error("Invalid signed transaction format");
-                }
-                await submitHydraTx({
-                    signedTx,
-                    isCreator: false,
-                });
-                setIsDialogOpen(false);
-                toast.success("Tip sent successfully!");
-                setValueSend("amount", 0);
-                setAmount("");
-                await Promise.allSettled([
-                    queryClient.invalidateQueries({ queryKey: ["balance-tip", tipAddress] }),
-                    queryClient.invalidateQueries({ queryKey: ["balance-commit", address] }),
-                    queryClient.invalidateQueries({ queryKey: ["status", tipAddress] }),
-                    queryClient.invalidateQueries({ queryKey: ["recents"] }),
-                ]);
-            } catch (error) {
-                console.error("Tipping failed:", error);
-                toast.error("Failed to send tip. Please try again.");
-            }
-        },
-        [address, signTx, queryClient, tipAddress, setValueSend],
-    );
-
-    const handleChange = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            const value = event.target.value;
-            if (/^\d*\.?\d{0,6}$/.test(value) && Number(value) >= 0) {
-                setAmount(value);
-                setValueSend("amount", Number(value), { shouldValidate: true });
-            }
-        },
-        [setValueSend],
-    );
-
-    const handleSelectChange = useCallback(
-        (event: React.ChangeEvent<HTMLSelectElement>) => {
-            const value = event.target.value;
-            if (value) {
-                const { txHash, outputIndex, amount } = JSON.parse(value);
-                setValue("txHash", txHash, { shouldValidate: true });
-                setValue("outputIndex", outputIndex, { shouldValidate: true });
-                setValue("amount", Number(amount), { shouldValidate: true });
-            } else {
-                setValue("txHash", "", { shouldValidate: true });
-                setValue("outputIndex", 0, { shouldValidate: true });
-                setValue("amount", 0, { shouldValidate: true });
-            }
-        },
-        [setValue],
-    );
-
-    useEffect(() => {
-        if (!isLoadingUTxOOnlyLovelace && !dataUTxOOnlyLovelace?.length && balanceTip === 0) {
-            toast.error("No UTXOs available for committing. Please ensure your wallet has at least 10 ADA.", {
-                id: "no-utxos",
-            });
-        }
-    }, [isLoadingUTxOOnlyLovelace, dataUTxOOnlyLovelace, balanceTip]);
 
     return (
         <motion.div
@@ -239,7 +56,7 @@ const FormTip = function ({ tipAddress }: { tipAddress: string }) {
                         <p className="text-sm text-gray-600 dark:text-gray-400">Total Balance On Hydra</p>
                         <motion.p
                             className="text-xl font-semibold text-blue-600 dark:text-blue-400"
-                            key={balanceCommit}
+                        
                             variants={{
                                 initial: { opacity: 0, x: -10 },
                                 animate: { opacity: 1, x: 0, transition: { duration: 0.3 } },

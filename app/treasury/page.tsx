@@ -5,23 +5,23 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import Tipper from "@/components/treasury";
+import Treasury from "@/components/treasury";
 import Title from "@/components/title";
 import TipperSkeleton from "@/components/treasury-skeleton";
 import Pagination from "@/components/pagination";
 import { useWallet } from "@/hooks/use-wallet";
-import { getProposals } from "@/services/treasury";
+import { getTreasuries } from "@/services/treasury";
 import { routers } from "@/constants/routers";
 import { images } from "@/public/images";
 import { toast } from "sonner";
 
-const TipperPage: React.FC = () => {
+export default function Page() {
     const [page, setPage] = useState(1);
     const { address } = useWallet();
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ["proposals", page, address],
-        queryFn: () => getProposals({ limit: 12, page }),
+        queryKey: ["treasuries", page, address],
+        queryFn: async () => await getTreasuries({ limit: 12, page }),
     });
 
     const noItemsContent = useMemo(
@@ -72,7 +72,7 @@ const TipperPage: React.FC = () => {
                         href={routers.dashboard}
                         className="inline-flex items-center justify-center rounded-sm bg-blue-600 px-8 py-2 text-lg font-semibold text-white shadow-xl hover:bg-blue-700 dark:bg-white dark:text-blue-900 dark:hover:bg-gray-100"
                     >
-                        Create Tipjar
+                        Create Treasury
                     </Link>
                 </motion.div>
             </motion.div>
@@ -140,9 +140,9 @@ const TipperPage: React.FC = () => {
                             animate="visible"
                             exit="exit"
                         >
-                            {data.data.map((result, index) => (
+                            {data.data.map((result: any, index: number) => (
                                 <motion.div
-                                    key={result.walletAddress || index}
+                                    key={result.id || index}
                                     className="rounded-xl border border-blue-100 bg-white shadow-lg dark:border-blue-900/30 dark:bg-slate-900/80"
                                     variants={{
                                         hidden: { opacity: 0, y: 20 },
@@ -151,19 +151,20 @@ const TipperPage: React.FC = () => {
                                     transition={{ delay: index * 0.1 }}
                                     whileHover={{ scale: 1.02, boxShadow: "0 10px 20px rgba(0, 0, 0, 0.15)" }}
                                 >
-                                    <Tipper
+                                    <Treasury
                                         image={result.image || images.logo}
                                         title={result.title || "Untitled Proposal"}
-                                        author={result.author || "Unknown Author"}
-                                        slug={result.walletAddress || ""}
-                                        datetime={new Date(Number(result.datetime || Date.now())).toLocaleString("en-GB", {
+                                        receiver={result.receiver || "Unknown Author"}
+                                        slug={result.id || ""}
+                                        datetime={new Date(Number(result.createdAt || Date.now())).toLocaleString("en-GB", {
                                             day: "2-digit",
                                             month: "2-digit",
                                             year: "numeric",
                                             hour: "2-digit",
                                             minute: "2-digit",
                                         })}
-                                        participants={2}
+                                        description={result.description || ""}
+                                        participants={result.owners.length}
                                     />
                                 </motion.div>
                             ))}
@@ -188,6 +189,4 @@ const TipperPage: React.FC = () => {
             </div>
         </motion.main>
     );
-};
-
-export default TipperPage;
+}

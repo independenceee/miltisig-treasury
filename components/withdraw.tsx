@@ -4,7 +4,7 @@ import { memo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight } from "./icons";
 import { useQuery } from "@tanstack/react-query";
-import { getWithdraws } from "@/services/tipjar.service";
+import { getWithdraws } from "@/services/treasury";
 import Pagination from "./pagination";
 
 // Define types for type safety
@@ -29,14 +29,16 @@ const stateVariants = {
     visible: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
 };
 
-const Withdraw = function ({ walletAddress }: { walletAddress: string }) {
+const Withdraw = function ({ name, threshold, allowance }: { name: string; threshold: number, allowance: number }) {
     const [page, setPage] = useState(1);
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ["withdraw", walletAddress, page],
+        queryKey: ["withdraw", name, page],
         queryFn: () =>
             getWithdraws({
-                walletAddress: walletAddress,
+                threshold: threshold,
+                allowance: allowance,
+                name: name,
                 page: page,
                 limit: 6,
             }),

@@ -3,7 +3,7 @@ import { MeshTxBuilder } from "../txbuilders/mesh.txbuilder";
 import { blockfrostProvider } from "../providers/cardano";
 import { APP_MNEMONIC, APP_NETWORK_ID } from "../constants/enviroments";
 import { DECIMAL_PLACE } from "../constants/common.constant";
-import { getProposals } from "@/services/treasury";
+import { getHistories, getTreasuries } from "@/services/treasury";
 
 describe("A multisig treasury is a shared fund where spending requires approval from at least m of n participants, with a predefined spending limit for security.", function () {
     let meshWallet: MeshWallet;
@@ -30,11 +30,11 @@ describe("A multisig treasury is a shared fund where spending requires approval 
     jest.setTimeout(600000000);
 
     test("Init", async function () {
-        return;
+        // return;
         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
             threshold: 2,
-            allowance: 10 * DECIMAL_PLACE,
+            allowance: 11 * DECIMAL_PLACE,
             name: "Aiken Course 2025",
         });
 
@@ -145,8 +145,23 @@ describe("A multisig treasury is a shared fund where spending requires approval 
         });
     });
 
-    test("Proposal", async function () {
-        const proposals = getProposals({});
-        console.log(proposals);
+    test("Withdraw", async function () {
+        // return;
+        const withdraw = await getHistories({
+            threshold: 2,
+            allowance: 10 * DECIMAL_PLACE,
+            name: "Aiken Course 2025",
+            page: 1,
+            limit: 12,
+        });
+
+        console.log(withdraw);
     });
 });
+
+/**
+ *
+ *
+ * Establish a multi-signature treasury wallet to securely manage shared funds and actively participate in Cardano governance (voting as a group, DRep coordination, etc.). Threshold: [threshold] out of [number of owners] signers. Allowance limit: [allowance] ADA per withdrawal. Perfect for DAOs, teams, and communities.
+ * addr_test1qr39uar0u87xrmptw0f8ryx5mp3scvc3pkehp57yj5zhugxdgese6p77sy9hk0rqc5wqd6n8vmfyqq9f7sdfz9dm0azqzmmdew,addr_test1qqy0z4ekhv8gcnmvkeakkaher82rlrx2yu9y79cjf4r704pqg73fhf002takqewlvjcy39dellyumg43f08uea0p6mps7pw77f,addr_test1qrpfhvwrmq0y27k2elu0seh65w6kwyxxee6sq7f9d2ax62e8wm6fj2y63rp3kql4skhu2wyt0uml07w2pggzpzh95ugqk9j5d9,addr_test1qpm9a92nk6grxwsxluqyjt9xd3cjcps90fjv8txm4spd6tv4mkujqpc7fzlvqu40kyvzh6fxmqp0578uk564ffqtfr7s9ppr9y
+ */

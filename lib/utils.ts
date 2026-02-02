@@ -2,28 +2,10 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import cbor from "cbor";
 
-/**
- * @description Merge multiple Tailwind CSS class names into a single string.
- * - Combines class names conditionally using `clsx`.
- * - Resolves Tailwind conflicts using `tailwind-merge`.
- *
- * @param inputs - List of class values (string, object, array, etc.)
- * @returns A single merged class name string.
- */
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-/**
- * @description Shorten a string by keeping the first and last `length` characters, separated by ellipsis (`...`).
- *
- * @example
- * shortenString("abcdef123456", 3) // "abc...456"
- *
- * @param str - The original string to shorten.
- * @param length - Number of characters to keep at the start and end (default = 6).
- * @returns The shortened string if longer than `2 * length`, otherwise returns the original string.
- */
 export function shortenString(str = "", length: number = 6): string {
     if (str.length <= length * 2) {
         return str;
@@ -33,21 +15,6 @@ export function shortenString(str = "", length: number = 6): string {
     return `${start}...${end}`;
 }
 
-/**
- * @description Convert inline datum (hex string) from a UTxO into JSON metadata.
- *
- * Process:
- * 1. Converts the hex string into a buffer.
- * 2. Decodes CBOR data from the buffer into a JavaScript object.
- * 3. Converts CBOR map entries into key-value pairs (UTF-8 or hex for `_pk`).
- *
- * @param datum - The inline datum in hex string format.
- * @param option - Optional settings:
- *   - `contain_pk`: If `false`, excludes the `_pk` field (default behavior).
- * @returns A JSON object (key-value map) representing the datum metadata.
- *
- * @throws Error if the datum is not a valid CBOR map.
- */
 export async function datumToJson(
     datum: string,
     option?: {
