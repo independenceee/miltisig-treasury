@@ -1,5 +1,5 @@
 import { MeshAdapter } from "../adapters/mesh.adapter";
-import { APP_NETWORK } from "../constants/enviroments.constant";
+import { APP_NETWORK } from "../constants/enviroments";
 import { deserializeAddress, mConStr0, mConStr1, mConStr2, stringToHex, mPubKeyAddress } from "@meshsdk/core";
 
 export class MeshTxBuilder extends MeshAdapter {
@@ -267,7 +267,7 @@ export class MeshTxBuilder extends MeshAdapter {
                     },
                 ]);
         } else {
-            throw new Error("Not enough signatures to proceed with disbursement.")
+            throw new Error("Not enough signatures to proceed with disbursement.");
         }
 
         unsignedTx

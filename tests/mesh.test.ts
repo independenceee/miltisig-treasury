@@ -1,8 +1,9 @@
 import { MeshWallet } from "@meshsdk/core";
 import { MeshTxBuilder } from "../txbuilders/mesh.txbuilder";
-import { blockfrostProvider } from "../providers/blockfrost.provider";
-import { APP_MNEMONIC, APP_NETWORK_ID } from "../constants/enviroments.constant";
+import { blockfrostProvider } from "../providers/cardano";
+import { APP_MNEMONIC, APP_NETWORK_ID } from "../constants/enviroments";
 import { DECIMAL_PLACE } from "../constants/common.constant";
+import { getProposals } from "@/services/treasury";
 
 describe("A multisig treasury is a shared fund where spending requires approval from at least m of n participants, with a predefined spending limit for security.", function () {
     let meshWallet: MeshWallet;
@@ -82,7 +83,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
 
     test("Signature", async function () {
         return;
-         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
+        const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
             threshold: 2,
             allowance: 10 * DECIMAL_PLACE,
@@ -110,7 +111,6 @@ describe("A multisig treasury is a shared fund where spending requires approval 
             name: "Aiken Course 2025",
         });
         const unsignedTx: string = await meshTxBuilder.execute({
-        
             amount: "10000000",
         });
 
@@ -126,7 +126,7 @@ describe("A multisig treasury is a shared fund where spending requires approval 
 
     test("End", async function () {
         return;
-         const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
+        const meshTxBuilder: MeshTxBuilder = new MeshTxBuilder({
             meshWallet: meshWallet,
             threshold: 2,
             allowance: 10 * DECIMAL_PLACE,
@@ -143,5 +143,10 @@ describe("A multisig treasury is a shared fund where spending requires approval 
                 resolve();
             });
         });
+    });
+
+    test("Proposal", async function () {
+        const proposals = getProposals({});
+        console.log(proposals);
     });
 });

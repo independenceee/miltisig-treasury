@@ -5,7 +5,7 @@ import { Session } from "next-auth";
 import { isNil } from "lodash";
 import { getNonceAddress } from "@/utils/auth";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { APP_NETWORK, APP_NETWORK_ID } from "@/constants/enviroments.constant";
+import { APP_NETWORK, APP_NETWORK_ID } from "@/constants/enviroments";
 import { wallets } from "@/constants/wallets";
 
 export interface WalletStoreType {

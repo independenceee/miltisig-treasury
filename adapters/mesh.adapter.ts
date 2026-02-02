@@ -17,7 +17,7 @@ import { blockfrostProvider } from "@/providers/cardano";
 import plutus from "../contract/plutus.json";
 import { Plutus } from "../types";
 import { DECIMAL_PLACE, title } from "../constants/common.constant";
-import { APP_NETWORK_ID, APP_WALLET_ADDRESS } from "../constants/enviroments.constant";
+import { APP_NETWORK_ID, APP_WALLET_ADDRESS } from "../constants/enviroments";
 
 /**
  * @description

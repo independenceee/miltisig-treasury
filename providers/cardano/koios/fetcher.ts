@@ -54,4 +54,16 @@ export class KoiosFetcher {
             throw parseHttpError(error);
         }
     }
+    async fetchAssetsFromStake(stakeAddress: string) {
+        try {
+            const { data, status } = await this._axiosInstance.post("/_stake_addresses ", {
+                _addresses: [stakeAddress],
+            });
+
+            if (status === 200) return data;
+            throw parseHttpError(data);
+        } catch (error) {
+            throw parseHttpError(error);
+        }
+    }
 }
