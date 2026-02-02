@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Action from "@/components/action";
 import Contact from "@/components/contact";
-import { routers } from "@/constants/routers.constant";
+import { routers } from "@/constants/routers";
 import { images } from "@/public/images";
 
 export default function Home() {

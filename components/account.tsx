@@ -10,10 +10,10 @@ import { signOut } from "next-auth/react";
 import { useWallet } from "@/hooks/use-wallet";
 import { useEffect, useState } from "react";
 import CountUp from "react-countup";
-import { APP_NETWORK } from "@/constants/enviroments";
+import { APP_NETWORK } from "@/constants/enviroments.constant";
 import Copy from "@/components/copy";
 import { Separator } from "@/components/ui/separator";
-import { DECIMAL_PLACE } from "@/constants/common";
+import { DECIMAL_PLACE } from "@/constants/common.constant";
 import { Button } from "@/components/ui/button";
 
 export default function Account() {

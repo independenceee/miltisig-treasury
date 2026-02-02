@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { images } from "@/public/images";
-import { routers } from "@/constants/routers.constant";
+import { routers } from "@/constants/routers";
 import { useSession } from "next-auth/react";
 import { wallets } from "@/constants/wallets";
 import { redirect, useRouter } from "next/navigation";

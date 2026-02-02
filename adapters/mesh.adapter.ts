@@ -15,7 +15,7 @@ import {
     stringToHex,
     UTxO,
 } from "@meshsdk/core";
-import { blockfrostProvider } from "../providers/blockfrost.provider";
+import { blockfrostProvider } from "@/providers/cardano";
 import plutus from "../contract/plutus.json";
 import { Plutus } from "../types";
 import { DECIMAL_PLACE, title } from "../constants/common.constant";
