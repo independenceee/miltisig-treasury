@@ -20,7 +20,7 @@ import {
     AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
-import Tipper from "./tipper";
+import Tipper from "./treasury";
 import { useWallet } from "@/hooks/use-wallet";
 import { images } from "@/public/images";
 import { routers } from "@/constants/routers";

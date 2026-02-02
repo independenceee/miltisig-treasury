@@ -10,6 +10,7 @@
         "test": "jest --runInBand"
     },
     "dependencies": {
+        "@hookform/resolvers": "^5.2.2",
         "@meshsdk/core": "^1.9.0-beta.98",
         "@prisma/client": "^7.3.0",
         "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -30,11 +31,13 @@
         "react-counter": "^1.1.0",
         "react-countup": "^6.5.3",
         "react-dom": "19.2.3",
+        "react-hook-form": "^7.71.1",
         "react-icons": "^5.5.0",
         "react-social-icons": "^6.25.0",
         "react-spinners": "^0.17.0",
         "sonner": "^2.0.7",
         "tailwind-merge": "^3.4.0",
+        "zod": "^4.3.6",
         "zustand": "^5.0.11"
     },
     "devDependencies": {

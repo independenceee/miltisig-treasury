@@ -5,9 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import Tipper from "@/components/tipper";
+import Tipper from "@/components/treasury";
 import Title from "@/components/title";
-import TipperSkeleton from "@/components/tipper-skeleton";
+import TipperSkeleton from "@/components/treasury-skeleton";
 import Pagination from "@/components/pagination";
 import { useWallet } from "@/hooks/use-wallet";
 import { getProposals } from "@/services/treasury";
@@ -21,7 +21,7 @@ const TipperPage: React.FC = () => {
 
     const { data, isLoading, error } = useQuery({
         queryKey: ["proposals", page, address],
-        queryFn: () => getProposals({ limit: 12, page, walletAddress: address || "" }),
+        queryFn: () => getProposals({ limit: 12, page }),
     });
 
     const noItemsContent = useMemo(
