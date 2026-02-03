@@ -258,7 +258,7 @@ export default function Home() {
                             </div>
                             <p className="max-w-3xl text-lg text-gray-600 dark:text-gray-300">
                                 A multisig treasury on Cardano enforces collective decision-making, on-chain transparency, and cryptographic security
-                                for shared assets.
+                                for shared assets using native scripts or Plutus contracts.
                             </p>
                         </motion.header>
 
@@ -296,13 +296,10 @@ export default function Home() {
                                                                 strokeWidth="2"
                                                                 strokeLinecap="round"
                                                                 strokeLinejoin="round"
-                                                                className="lucide lucide-gift h-8 w-8"
+                                                                className="lucide lucide-eye h-8 w-8"
                                                             >
-                                                                <polyline points="20 12 20 22 4 22 4 12"></polyline>
-                                                                <rect x="2" y="7" width="20" height="5"></rect>
-                                                                <line x1="12" y1="22" x2="12" y2="7"></line>
-                                                                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
-                                                                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                                                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                                                                <circle cx="12" cy="12" r="3" />
                                                             </svg>
                                                         </div>
                                                         <div>
@@ -311,12 +308,11 @@ export default function Home() {
                                                         </div>
                                                     </div>
                                                     <p className="mb-3 text-base font-semibold text-purple-500 dark:text-purple-400">
-                                                        Can we trust the tipping process?
+                                                        All transactions are on-chain and auditable
                                                     </p>
                                                     <p className="text-base leading-relaxed text-gray-600 dark:text-gray-300">
-                                                        Hydra TipJar leverages Cardano’s blockchain to ensure{" "}
-                                                        <strong className="text-gray-900 dark:text-white">transparent and auditable tipping</strong>,
-                                                        so every contribution is trackable and secure.
+                                                        Every proposal, approval, and execution is recorded immutably on Cardano blockchain — fully
+                                                        verifiable by any community member.
                                                     </p>
                                                 </div>
                                             </div>
@@ -333,6 +329,7 @@ export default function Home() {
                                         </div>
                                     </div>
                                 </motion.div>
+
                                 <motion.div
                                     variants={{
                                         hidden: { opacity: 0, x: -50 },
@@ -351,7 +348,7 @@ export default function Home() {
                                         <div className="hidden w-5/12 pr-8 lg:block">
                                             <div className="text-left opacity-40">
                                                 <div className="text-6xl font-bold text-blue-400/30 dark:text-blue-500/30">02</div>
-                                                <div className="mt-2 text-blue-300/50">Engagement</div>
+                                                <div className="mt-2 text-blue-300/50">Security</div>
                                             </div>
                                         </div>
                                         <div className="relative z-10 hidden lg:block">
@@ -374,32 +371,29 @@ export default function Home() {
                                                                 strokeWidth="2"
                                                                 strokeLinecap="round"
                                                                 strokeLinejoin="round"
-                                                                className="lucide lucide-users h-8 w-8"
+                                                                className="lucide lucide-shield h-8 w-8"
                                                             >
-                                                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                                                                <circle cx="9" cy="7" r="4"></circle>
-                                                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-.5 7-2.3C14.5 4.5 17 5 19 5a1 1 0 0 1 1 1z" />
                                                             </svg>
                                                         </div>
                                                         <div>
-                                                            <h3 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">Community</h3>
+                                                            <h3 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">Security</h3>
                                                             <div className="h-0.5 w-16 bg-blue-400 dark:bg-blue-500"></div>
                                                         </div>
                                                     </div>
                                                     <p className="mb-3 text-base font-semibold text-blue-500 dark:text-blue-400">
-                                                        Do we trust the contributors we support?
+                                                        No single point of failure
                                                     </p>
                                                     <p className="text-base leading-relaxed text-gray-600 dark:text-gray-300">
-                                                        Hydra TipJar enables seamless onboarding and{" "}
-                                                        <strong className="text-gray-900 dark:text-white">community-driven tipping</strong>, rewarding
-                                                        creators and fostering collaborative ecosystems.
+                                                        Require multiple signers (e.g., 3-of-5) to approve any withdrawal — eliminating risks from
+                                                        compromised keys or rogue actors.
                                                     </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </motion.div>
+
                                 <motion.div
                                     variants={{
                                         hidden: { opacity: 0, x: -50 },
@@ -431,24 +425,27 @@ export default function Home() {
                                                                 strokeWidth="2"
                                                                 strokeLinecap="round"
                                                                 strokeLinejoin="round"
-                                                                className="lucide lucide-shield-check h-8 w-8"
+                                                                className="lucide lucide-users h-8 w-8"
                                                             >
-                                                                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-.5 7-2.3C14.5 4.5 17 5 19 5a1 1 0 0 1 1 1z"></path>
-                                                                <path d="m9 11 2 2 4-4"></path>
+                                                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                                                <circle cx="9" cy="7" r="4"></circle>
+                                                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                                             </svg>
                                                         </div>
                                                         <div>
-                                                            <h3 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">Verification</h3>
+                                                            <h3 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
+                                                                Collective Governance
+                                                            </h3>
                                                             <div className="h-0.5 w-16 bg-green-400 dark:bg-green-500"></div>
                                                         </div>
                                                     </div>
                                                     <p className="mb-3 text-base font-semibold text-green-500 dark:text-green-400">
-                                                        Can we trust the integrity of contributions?
+                                                        Decentralized decision-making
                                                     </p>
                                                     <p className="text-base leading-relaxed text-gray-600 dark:text-gray-300">
-                                                        Blockchain-based verification ensures tips are{" "}
-                                                        <strong className="text-gray-900 dark:text-white">secure and authentic</strong>, enabling
-                                                        creators to build trust through verified contributions.
+                                                        Empower DAOs and teams with on-chain voting and approval thresholds — aligning incentives and
+                                                        preventing centralized control.
                                                     </p>
                                                 </div>
                                             </div>
@@ -460,7 +457,7 @@ export default function Home() {
                                         <div className="hidden w-5/12 pl-8 lg:block">
                                             <div className="text-right opacity-40">
                                                 <div className="text-6xl font-bold text-green-400/30 dark:text-green-500/30">03</div>
-                                                <div className="mt-2 text-green-300/50">Security</div>
+                                                <div className="mt-2 text-green-300/50">Governance</div>
                                             </div>
                                         </div>
                                     </div>

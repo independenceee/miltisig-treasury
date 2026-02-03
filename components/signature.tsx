@@ -103,8 +103,8 @@ const Signature = function ({
                         <USD className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                     </motion.div>
                     <div>
-                        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Recent Tips</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Your latest received tips</p>
+                        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Signature</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Your latest signature treasury</p>
                     </div>
                 </div>
 
@@ -298,10 +298,8 @@ const Result = function ({
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">đã ký</span>
                     </div>
 
-                    {/* Phân cách */}
                     <div className="h-8 w-px bg-gray-300 dark:bg-gray-600" />
 
-                    {/* Phần cần */}
                     <div className="flex items-center gap-2">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700 text-lg font-bold shadow-inner dark:bg-blue-900/40 dark:text-blue-300">
                             {threshold}
@@ -309,7 +307,6 @@ const Result = function ({
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">cần</span>
                     </div>
 
-                    {/* Badge trạng thái khi đủ (giống Safe UI) */}
                     {threshold > 0 && signers.length >= threshold && (
                         <div className="ml-3 flex items-center gap-1.5 rounded-full bg-green-100 px-4 py-1.5 text-sm font-semibold text-green-800 shadow-sm dark:bg-green-900/50 dark:text-green-200">
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -319,7 +316,6 @@ const Result = function ({
                         </div>
                     )}
 
-                    {/* Nếu chưa đủ, hiển thị hint nhẹ */}
                     {threshold > 0 && signers.length < threshold && signers.length > 0 && (
                         <div className="ml-3 text-xs text-amber-700 dark:text-amber-400 italic">Còn thiếu {threshold - signers.length} chữ ký</div>
                     )}

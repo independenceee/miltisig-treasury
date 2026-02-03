@@ -10,129 +10,188 @@ import { routers } from "@/constants/routers";
 export default function Footer() {
     const pathname = usePathname();
 
+    // Ẩn footer ở trang docs và login (giữ nguyên logic)
     if (pathname.startsWith(routers.documentation) || pathname.startsWith(routers.login)) {
         return null;
     }
+
     return (
-        <div className="relative z-30 border-t dark:border-white/20 bg-white/80 dark:bg-black/20  text-gray-900 dark:text-white">
+        <div className="relative z-30 border-t border-gray-200/50 dark:border-white/10 bg-white/70 dark:bg-black/30 backdrop-blur-md text-gray-900 dark:text-gray-100">
             <footer className="relative mx-auto max-w-7xl px-6 py-16 lg:px-8">
-                <div className="absolute left-6 right-6 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                {/* Gradient line top */}
+                <div className="absolute left-6 right-6 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
+
                 <div className="flex flex-col">
-                    <div className="grid w-full grid-cols-1 gap-12 sm:grid-cols-2 md:grid-cols-3">
+                    <div className="grid w-full grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
+                        {/* Column 1: About / Stay Connected */}
                         <div className="relative">
-                            <div className="absolute -top-2 left-0 h-1 w-8 bg-gradient-to-r from-blue-500 to-transparent opacity-60"></div>
-                            <h3 className="mb-6 text-lg font-bold uppercase tracking-wider text-gray-900 dark:text-white">
-                                Stay Connected with Cardano2VN
-                            </h3>
-                            <ul className="space-y-4">
+                            <div className="absolute -top-2 left-0 h-1 w-10 bg-gradient-to-r from-blue-500 to-cyan-400 opacity-70"></div>
+                            <h3 className="mb-6 text-lg font-bold uppercase tracking-wider text-gray-900 dark:text-white">Multisig Treasury</h3>
+                            <p className="mb-6 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                                Secure, transparent treasury management for DAOs and communities on Cardano. Powered by native multisig scripts.
+                            </p>
+                            <ul className="space-y-3">
                                 <li>
                                     <Link
-                                        className="group flex items-center text-gray-900 dark:text-white transition-colors duration-200 hover:text-white"
-                                        href="mailto:cardano2vn@gmail.com"
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="mailto:support@multisigtreasury.io" // thay email thật
                                     >
-                                        <span className="mr-3 h-px w-2 bg-gray-600 transition-colors duration-200 group-hover:bg-white"></span>Support
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Support
                                     </Link>
                                 </li>
                                 <li>
                                     <Link
-                                        className="group flex items-center text-gray-900 dark:text-white transition-colors duration-200 hover:text-white"
-                                        href="mailto:hello@cardano2vn.com"
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="mailto:hello@multisigtreasury.io"
                                     >
-                                        <span className="mr-3 h-px w-2 bg-gray-600 transition-colors duration-200 group-hover:bg-white"></span>Contact
-                                        Us
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Contact Us
                                     </Link>
                                 </li>
                                 <li>
                                     <Link
-                                        className="group flex items-center text-gray-900 dark:text-white transition-colors duration-200 hover:text-white"
-                                        href="https://docs.cardano2vn.com"
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="https://docs.multisigtreasury.io" // giả sử link docs
                                     >
-                                        <span className="mr-3 h-px w-2 bg-gray-600 transition-colors duration-200 group-hover:bg-white"></span>Docs
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Documentation
                                     </Link>
                                 </li>
                             </ul>
                         </div>
+
+                        {/* Column 2: Resources */}
                         <div className="relative">
-                            <div className="absolute -top-2 left-0 h-1 w-8 bg-gradient-to-r from-blue-500 to-transparent opacity-60"></div>
-                            <h3 className="mb-6 text-lg font-bold uppercase tracking-wider text-gray-900 dark:text-white">Follow Us</h3>
-                            <ul className="space-y-4">
+                            <div className="absolute -top-2 left-0 h-1 w-10 bg-gradient-to-r from-cyan-500 to-purple-500 opacity-70"></div>
+                            <h3 className="mb-6 text-lg font-bold uppercase tracking-wider text-gray-900 dark:text-white">Resources</h3>
+                            <ul className="space-y-3">
                                 <li>
                                     <Link
-                                        className="group flex items-center text-gray-900 dark:text-white transition-colors duration-200 hover:text-white"
-                                        href="https://www.linkedin.com/company/cardano2vn"
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="https://cardano.org"
+                                        target="_blank"
                                     >
-                                        <span className="mr-3 h-px w-2 bg-gray-600 transition-colors duration-200 group-hover:bg-white"></span>
-                                        LinkedIn
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Cardano.org
                                     </Link>
                                 </li>
                                 <li>
                                     <Link
-                                        className="group flex items-center text-gray-900 dark:text-white transition-colors duration-200 hover:text-white"
-                                        href="https://twitter.com/cardano2vn"
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="https://developers.cardano.org"
+                                        target="_blank"
                                     >
-                                        <span className="mr-3 h-px w-2 bg-gray-600 transition-colors duration-200 group-hover:bg-white"></span>Twitter
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Developer Portal
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="/guides/multisig-setup"
+                                    >
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Multisig Guide
                                     </Link>
                                 </li>
                             </ul>
                         </div>
+
+                        {/* Column 3: Community & Follow */}
                         <div className="relative">
-                            <div className="absolute -top-2 left-0 h-1 w-8 bg-gradient-to-r from-blue-500 to-transparent opacity-60"></div>
-                            <h3 className="mb-6 text-lg font-bold uppercase tracking-wider text-gray-900 dark:text-white">Company</h3>
-                            <ul className="space-y-4">
+                            <div className="absolute -top-2 left-0 h-1 w-10 bg-gradient-to-r from-purple-500 to-pink-500 opacity-70"></div>
+                            <h3 className="mb-6 text-lg font-bold uppercase tracking-wider text-gray-900 dark:text-white">Community</h3>
+                            <ul className="space-y-3">
                                 <li>
                                     <Link
-                                        className="group flex items-center text-gray-900 dark:text-white transition-colors duration-200 hover:text-white"
-                                        href="/about"
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="https://twitter.com/multisigtreasury" // thay handle thật
+                                        target="_blank"
                                     >
-                                        <span className="mr-3 h-px w-2 bg-gray-600 transition-colors duration-200 group-hover:bg-white"></span>About
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Twitter / X
                                     </Link>
                                 </li>
                                 <li>
                                     <Link
-                                        className="group flex items-center text-gray-900 dark:text-white transition-colors duration-200 hover:text-white"
-                                        href="/roadmap"
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="https://discord.gg/multisigtreasury" // giả sử có Discord
+                                        target="_blank"
                                     >
-                                        <span className="mr-3 h-px w-2 bg-gray-600 transition-colors duration-200 group-hover:bg-white"></span>Roadmap
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Discord
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="https://github.com/multisig-treasury"
+                                        target="_blank"
+                                    >
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        GitHub
                                     </Link>
                                 </li>
                             </ul>
                         </div>
+
+                        {/* Column 4: Legal */}
                         <div className="relative">
-                            <div className="absolute -top-2 left-0 h-1 w-8 bg-gradient-to-r from-blue-500 to-transparent opacity-60"></div>
+                            <div className="absolute -top-2 left-0 h-1 w-10 bg-gradient-to-r from-pink-500 to-red-500 opacity-70"></div>
                             <h3 className="mb-6 text-lg font-bold uppercase tracking-wider text-gray-900 dark:text-white">Legal</h3>
-                            <ul className="space-y-4">
+                            <ul className="space-y-3">
                                 <li>
                                     <Link
-                                        className="group flex items-center text-gray-900 dark:text-white transition-colors duration-200 hover:text-white"
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                                         href="/privacy-policy"
                                     >
-                                        <span className="mr-3 h-px w-2 bg-gray-600 transition-colors duration-200 group-hover:bg-white"></span>Privacy
-                                        Policy
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Privacy Policy
                                     </Link>
                                 </li>
                                 <li>
                                     <Link
-                                        className="group flex items-center text-gray-900 dark:text-white transition-colors duration-200 hover:text-white"
-                                        href="/terms"
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="/terms-of-service"
                                     >
-                                        <span className="mr-3 h-px w-2 bg-gray-600 transition-colors duration-200 group-hover:bg-white"></span>Terms
-                                        of Use
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Terms of Service
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        className="group flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                        href="/disclaimer"
+                                    >
+                                        <span className="mr-3 inline-block h-px w-3 bg-gray-500 group-hover:bg-blue-500 transition-all duration-200"></span>
+                                        Disclaimer
                                     </Link>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    <div className="mt-16 border-t border-white/10 pt-8">
-                        <div className="flex flex-col items-center justify-between md:flex-row">
-                            <div className="mb-4 flex items-center gap-4 md:mb-0">
-                                <Image className="h-8 w-auto opacity-80" src={images.logo} alt="cardano2vn" />
-                                <div className="text-sm text-gray-400">Trust Protocol for Distributed Work</div>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-400">
-                                <ThemeToggle />
 
-                                <span>|</span>
-                                <span>© 2025 Cardano2VN. All rights reserved.</span>
+                    {/* Bottom bar */}
+                    <div className="mt-16 border-t border-gray-200/30 dark:border-white/10 pt-10">
+                        <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+                            <div className="flex items-center gap-4">
+                                <Image
+                                    className="h-9 w-auto opacity-90 transition-opacity hover:opacity-100"
+                                    src={images.logo}
+                                    alt="Multisig Treasury"
+                                    width={36}
+                                    height={36}
+                                />
+                                <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                    Secure Governance • Decentralized Treasury • Built on Cardano
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                                <ThemeToggle />
+                                <span className="text-gray-400/50">|</span>
+                                <span>© {new Date().getFullYear()} Multisig Treasury. All rights reserved.</span>
                             </div>
                         </div>
                     </div>

@@ -143,7 +143,7 @@ export default function Page() {
                 >
                     <Status
                         name={formValues.title}
-                        title="There is now a head available for you to access and below is the current state of your head"
+                        title="Preview Your Multisig Treasury Configuration: Review Name, Threshold, Allowance, Signers & Security Rules Before Final On-Chain Deployment"
                         loading={false}
                         allowance={formValues.allowance / DECIMAL_PLACE}
                         threshold={formValues.threshold}
