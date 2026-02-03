@@ -53,6 +53,7 @@ export default function Info({
                     <div>
                         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">{title}</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
+                       
                     </div>
                 </div>
             </div>
@@ -201,8 +202,8 @@ export default function Info({
                                         {copyStatus === "copied"
                                             ? "Link copied to clipboard!"
                                             : copyStatus === "error"
-                                            ? "Failed to copy link"
-                                            : "Copy the tip jar link"}
+                                              ? "Failed to copy link"
+                                              : "Copy the tip jar link"}
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>

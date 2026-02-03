@@ -121,7 +121,7 @@ export default function SignIn() {
                     <Link className="underline-offset-2 underline" href={"https://traceability.trustorstudio.com/"} target="_blake">
                         Help Center
                     </Link>
-                    <p className="mt-[16px] text-gray-400">Traceability Network Foundation Independence</p>
+                    <p className="mt-[16px] text-gray-400">Multisig Treasury Network Foundation Cardano2vn</p>
                 </footer>
             </div>
         </div>

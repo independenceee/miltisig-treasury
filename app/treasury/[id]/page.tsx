@@ -1,7 +1,7 @@
 "use client";
 
 import Info from "@/components/info";
-import FormTip from "@/components/form-tip";
+import FormTip from "@/components/form-deposit";
 import { useParams } from "next/navigation";
 import Status from "@/components/status";
 

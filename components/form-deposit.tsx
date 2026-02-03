@@ -133,7 +133,7 @@ const FormTip = function ({
                         <Wallet className="h-6 w-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                     </motion.div>
                     <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Total Balance</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Balance Of Treasury</p>
                         <motion.p
                             className="text-xl font-semibold text-blue-600 dark:text-blue-400"
                             variants={{
@@ -222,20 +222,20 @@ const FormTip = function ({
                                     onClick={() => Number(amount) >= 2 && setIsDialogOpen(true)}
                                     className="w-full rounded-md bg-blue-500 dark:bg-blue-600 py-3 px-8 text-base font-semibold text-white dark:text-white shadow-lg hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 transition-colors"
                                 >
-                                    {isSubmittingSend ? "Sending..." : "Send Tip"}
+                                    {isSubmittingSend ? "Depositing..." : "Deposit"}
                                 </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                                 <AlertDialogHeader>
-                                    <AlertDialogTitle>Confirm Tip</AlertDialogTitle>
+                                    <AlertDialogTitle>Confirm Deposit</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                        You are about to send {amount || 0} ADA to address. This action cannot be undone.
+                                        Deposit will be sent to the multisig treasury address. Requires {threshold} approval(s) from signers before funds are usable.
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                                     <AlertDialogAction onClick={handleSubmitSend(onSubmitDeposit)} disabled={isSubmittingSend}>
-                                        {isSubmittingSend ? "Sending..." : "Confirm Tip"}
+                                        {isSubmittingSend ? "Processing Deposit..." : "Deposit to Treasury"}
                                     </AlertDialogAction>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
