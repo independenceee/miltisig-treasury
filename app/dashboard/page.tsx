@@ -14,9 +14,12 @@ import { getTreasuries } from "@/services/treasury";
 import { routers } from "@/constants/routers";
 import { images } from "@/public/images";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export default function Page() {
     const [page, setPage] = useState(1);
+    const { status: sessionStatus } = useSession();
     const { address } = useWallet();
 
     const { data, isLoading, error } = useQuery({
@@ -79,6 +82,9 @@ export default function Page() {
         ),
         [],
     );
+    if (sessionStatus === "unauthenticated") {
+        redirect("/login");
+    }
 
     if (error) {
         toast.error(error instanceof Error ? error.message : "Failed to load tippers");
