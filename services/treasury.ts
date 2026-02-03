@@ -109,11 +109,18 @@ export async function getTreasury({ id }: { id: string }) {
     });
 
     const utxo = (await blockfrostProvider.fetchAddressUTxOs(meshTxBuilder.spendAddress, meshTxBuilder.policyId + stringToHex(treasury.title)))[0];
+    const value = utxo.output.amount.reduce((total, asset) => {
+        if (asset.unit === "lovelace") {
+            return total + Number(asset.quantity);
+        }
+        return total;
+    }, Number(0));
 
     const datum = meshTxBuilder.convertDatum({ plutusData: utxo.output.plutusData as string });
     return {
         ...datum,
-        treasury,
+        value,
+        ...treasury,
     };
 }
 
@@ -206,7 +213,13 @@ export async function getHistories({
 
                 return {
                     txHash: transaction.tx_hash,
-                    timestamp: new Date(transaction.block_time * 1000).toISOString(),
+                    timestamp: new Date(transaction.block_time * 1000).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    }),
                     action: action,
                     signers: signers.length,
                     change: (newADA - oldADA) / DECIMAL_PLACE,

@@ -3,7 +3,7 @@ import { MeshTxBuilder } from "../txbuilders/mesh.txbuilder";
 import { blockfrostProvider } from "../providers/cardano";
 import { APP_MNEMONIC, APP_NETWORK_ID } from "../constants/enviroments";
 import { DECIMAL_PLACE } from "../constants/common.constant";
-import { getHistories, getTreasuries } from "@/services/treasury";
+import { getHistories } from "@/services/treasury";
 
 describe("A multisig treasury is a shared fund where spending requires approval from at least m of n participants, with a predefined spending limit for security.", function () {
     let meshWallet: MeshWallet;

@@ -1,11 +1,11 @@
 "use client";
 
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { Wallet } from "./icons";
 import { useWallet } from "@/hooks/use-wallet";
 import { Button } from "./ui/button";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
     AlertDialog,
@@ -24,13 +24,93 @@ import z from "zod";
 import Image from "next/image";
 import { images } from "@/public/images";
 import CountUp from "react-countup";
+import { DECIMAL_PLACE } from "@/constants/common.constant";
+import { toast } from "sonner";
+import { deposit, submitTx } from "@/services/mesh";
 
-const FormTip = function ({ tipAddress }: { tipAddress: string }) {
+export const DepositSchema = z.object({
+    amount: z.number().min(2, "Must commit at least 2 ADA"),
+});
+
+type DepositForm = z.infer<typeof DepositSchema>;
+const FormTip = function ({
+    allowance,
+    threshold,
+    title,
+    value,
+    isLoading,
+}: {
+    allowance: number;
+    threshold: number;
+    title: string;
+    value: number;
+    isLoading: boolean;
+}) {
     const { address, signTx } = useWallet();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [amount, setAmount] = useState<string>("");
     const queryClient = useQueryClient();
 
+    const {
+        register: registerSend,
+        handleSubmit: handleSubmitSend,
+        formState: { errors: errorsSend, isSubmitting: isSubmittingSend },
+        setValue: setValueSend,
+    } = useForm<DepositForm>({
+        resolver: zodResolver(DepositSchema),
+        defaultValues: {
+            amount: 0,
+        },
+    });
+
+    const onSubmitDeposit = async function (data: DepositForm) {
+        try {
+            if (!address) {
+                toast.error("Please connect your wallet");
+                return;
+            }
+            if (data.amount <= 0) {
+                toast.error("Please enter a valid amount");
+                return;
+            }
+
+            const unsignedTx = await deposit({
+                walletAddress: address,
+                amount: data.amount * DECIMAL_PLACE,
+                allowance: allowance,
+                threshold: threshold,
+                title: title,
+            });
+            if (typeof unsignedTx !== "string") {
+                throw new Error("Invalid transaction format");
+            }
+            const signedTx = await signTx(unsignedTx);
+            if (typeof signedTx !== "string") {
+                throw new Error("Invalid signed transaction format");
+            }
+            await submitTx({
+                signedTx,
+            });
+            setIsDialogOpen(false);
+            toast.success("Tip sent successfully!");
+            setValueSend("amount", 0);
+            setAmount("");
+            await Promise.allSettled([queryClient.invalidateQueries({ queryKey: ["treasury"] })]);
+        } catch (error) {
+            toast.error("Failed to send tip. Please try again.");
+        }
+    };
+
+    const handleChange = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            const value = event.target.value;
+            if (/^\d*\.?\d{0,6}$/.test(value) && Number(value) >= 0) {
+                setAmount(value);
+                setValueSend("amount", Number(value), { shouldValidate: true });
+            }
+        },
+        [setValueSend],
+    );
 
     return (
         <motion.div
@@ -53,10 +133,9 @@ const FormTip = function ({ tipAddress }: { tipAddress: string }) {
                         <Wallet className="h-6 w-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                     </motion.div>
                     <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Total Balance On Hydra</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Total Balance</p>
                         <motion.p
                             className="text-xl font-semibold text-blue-600 dark:text-blue-400"
-                        
                             variants={{
                                 initial: { opacity: 0, x: -10 },
                                 animate: { opacity: 1, x: 0, transition: { duration: 0.3 } },
@@ -64,48 +143,12 @@ const FormTip = function ({ tipAddress }: { tipAddress: string }) {
                             initial="initial"
                             animate="animate"
                         >
-                            {isLoadingBalance ? (
+                            {isLoading ? (
                                 "0.00"
                             ) : (
                                 <CountUp
                                     start={0}
-                                    end={(((balanceCommit as number) / DECIMAL_PLACE) as number) || 0}
-                                    duration={2.75}
-                                    separator=" "
-                                    decimals={4}
-                                    decimal=","
-                                />
-                            )}{" "}
-                            ADA
-                        </motion.p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-3">
-                    <motion.div
-                        className="rounded-full bg-white/90 p-2 dark:bg-slate-800/90"
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                    >
-                        <Wallet className="h-6 w-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
-                    </motion.div>
-                    <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Total ADA Tipped</p>
-                        <motion.p
-                            className="text-xl font-semibold text-blue-600 dark:text-blue-400"
-                            key={balanceTip}
-                            variants={{
-                                initial: { opacity: 0, x: -10 },
-                                animate: { opacity: 1, x: 0, transition: { duration: 0.3 } },
-                            }}
-                            initial="initial"
-                            animate="animate"
-                        >
-                            {isLoadingBalance ? (
-                                "0.00"
-                            ) : (
-                                <CountUp
-                                    start={0}
-                                    end={(((balanceTip as number) / DECIMAL_PLACE) as number) || 0}
+                                    end={((value / DECIMAL_PLACE) as number) || 0}
                                     duration={2.75}
                                     separator=" "
                                     decimals={4}
@@ -118,191 +161,88 @@ const FormTip = function ({ tipAddress }: { tipAddress: string }) {
                 </div>
             </div>
 
-            {isLoadingBalanceCommit ? (
-                <div className="mt-4 text-center">
-                    <motion.div
-                        className="h-5 w-5 border-2 border-t-transparent border-blue-600 rounded-full mx-auto"
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                    />
+            <form onSubmit={handleSubmitSend(onSubmitDeposit)} className="mt-4 rounded-lg bg-blue-50/80 p-4 dark:bg-slate-800/80">
+                <div className="mb-3 flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Top Token</span>
+                    <div className="flex items-center gap-2">
+                        <Image src={images.cardano} alt="ADA" className="h-5 w-5" />
+                        <span className="font-medium text-gray-800 dark:text-gray-300">ADA</span>
+                    </div>
                 </div>
-            ) : balanceCommit === 0 ? (
-                <form onSubmit={handleSubmit(onSubmitCommit)} className="flex flex-col mt-4">
+                <div className="flex flex-col">
                     <motion.div
                         className="relative"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: 0.8 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
                     >
                         <label
-                            htmlFor="adaCommit"
+                            htmlFor="amount"
                             className="absolute rounded-xl z-10 -top-2 left-3 bg-white dark:bg-slate-900/50 px-1 text-sm font-medium text-gray-700 dark:text-gray-200 transition-all"
                         >
-                            Select ADA Commit
+                            Amount (ADA)
                         </label>
-                        {isLoadingUTxOOnlyLovelace ? (
-                            <div className="text-center py-2">
-                                <motion.div
-                                    className="h-5 w-5 border-2 border-t-transparent border-blue-600 rounded-full mx-auto"
-                                    animate={{ rotate: 360 }}
-                                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                                />
-                            </div>
-                        ) : dataUTxOOnlyLovelace?.length ? (
-                            <select
-                                id="adaCommit"
-                                className="w-full rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2.5 px-4 text-base text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors disabled:opacity-50"
-                                disabled={isSubmitting}
-                                onChange={handleSelectChange}
-                                aria-label="Select ADA amount to commit"
-                            >
-                                <option value="">-- Select amount --</option>
-                                {dataUTxOOnlyLovelace
-                                    .filter((utxo) => Number(utxo.amount) >= 10000000)
-                                    .map((utxo) => (
-                                        <option key={`${utxo.txHash}-${utxo.outputIndex}`} value={JSON.stringify(utxo)}>
-                                            {(Number(utxo.amount) / DECIMAL_PLACE).toFixed(2)} ADA
-                                        </option>
-                                    ))}
-                            </select>
-                        ) : (
-                            <p className="text-sm text-red-500 dark:text-red-400 py-2">
-                                No UTXOs with at least 10 ADA available for committing. Please add funds to your wallet.
-                            </p>
-                        )}
-                        {errors.amount && (
+                        <input
+                            {...registerSend("amount", {
+                                setValueAs: (value) => Number(value),
+                            })}
+                            type="number"
+                            id="amount"
+                            placeholder="Enter amount in ADA"
+                            step="0.000001"
+                            className="w-full rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2.5 px-4 text-base text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors disabled:opacity-50"
+                            disabled={isSubmittingSend}
+                            onChange={handleChange}
+                            value={amount}
+                        />
+                        {errorsSend.amount && (
                             <motion.p
                                 className="text-red-500 text-xs mt-1 bg-red-50 dark:bg-red-900/30 px-2 py-1 rounded"
                                 initial={{ x: -10, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ duration: 0.2, type: "spring", stiffness: 100 }}
                             >
-                                {errors.amount.message}
+                                {errorsSend.amount.message}
                             </motion.p>
                         )}
                     </motion.div>
-                    {dataUTxOOnlyLovelace?.length && dataUTxOOnlyLovelace.some((utxo) => Number(utxo.amount) >= 10000000) ? (
-                        <motion.div
-                            className="bg-white dark:bg-slate-900/50 pt-4"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.9 }}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button
-                                        type="button"
-                                        disabled={isSubmitting}
-                                        className="w-full rounded-md bg-blue-500 dark:bg-blue-600 py-3 px-8 text-base font-semibold text-white dark:text-white shadow-lg hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                                    >
-                                        {isSubmitting ? "Submitting..." : "Commit"}
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure you want to apply for proposal?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            You need to commit at least 10 ADA to register as a proposal. This amount will be refunded when the
-                                            session ends.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={handleSubmit(onSubmitCommit)} disabled={isSubmitting}>
-                                            {isSubmitting ? "Committing..." : "Commit"}
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </motion.div>
-                    ) : null}
-                </form>
-            ) : (
-                <form onSubmit={handleSubmitSend(onSubmitSend)} className="mt-4 rounded-lg bg-blue-50/80 p-4 dark:bg-slate-800/80">
-                    <div className="mb-3 flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Top Token</span>
-                        <div className="flex items-center gap-2">
-                            <Image src={images.cardano} alt="ADA" className="h-5 w-5" />
-                            <span className="font-medium text-gray-800 dark:text-gray-300">ADA</span>
-                        </div>
-                    </div>
-                    <div className="flex flex-col">
-                        <motion.div
-                            className="relative"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.2 }}
-                        >
-                            <label
-                                htmlFor="amount"
-                                className="absolute rounded-xl z-10 -top-2 left-3 bg-white dark:bg-slate-900/50 px-1 text-sm font-medium text-gray-700 dark:text-gray-200 transition-all"
-                            >
-                                Amount (ADA)
-                            </label>
-                            <input
-                                {...registerSend("amount", {
-                                    setValueAs: (value) => Number(value),
-                                })}
-                                type="number"
-                                id="amount"
-                                placeholder="Enter amount in ADA"
-                                step="0.000001"
-                                className="w-full rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 py-2.5 px-4 text-base text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors disabled:opacity-50"
-                                disabled={isSubmittingSend}
-                                onChange={handleChange}
-                                value={amount}
-                            />
-                            {errorsSend.amount && (
-                                <motion.p
-                                    className="text-red-500 text-xs mt-1 bg-red-50 dark:bg-red-900/30 px-2 py-1 rounded"
-                                    initial={{ x: -10, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
-                                    transition={{ duration: 0.2, type: "spring", stiffness: 100 }}
+                    <motion.div
+                        className="pt-4"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.9 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    type="button"
+                                    disabled={isSubmittingSend || Number(amount) <= 0}
+                                    onClick={() => Number(amount) >= 2 && setIsDialogOpen(true)}
+                                    className="w-full rounded-md bg-blue-500 dark:bg-blue-600 py-3 px-8 text-base font-semibold text-white dark:text-white shadow-lg hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 transition-colors"
                                 >
-                                    {errorsSend.amount.message}
-                                </motion.p>
-                            )}
-                        </motion.div>
-                        <motion.div
-                            className="pt-4"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.9 }}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                                <AlertDialogTrigger asChild>
-                                    <Button
-                                        type="button"
-                                        disabled={isSubmittingSend || Number(amount) <= 0}
-                                        onClick={() => Number(amount) >= 2 && setIsDialogOpen(true)}
-                                        className="w-full rounded-md bg-blue-500 dark:bg-blue-600 py-3 px-8 text-base font-semibold text-white dark:text-white shadow-lg hover:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                                    >
-                                        {isSubmittingSend ? "Sending..." : "Send Tip"}
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Confirm Tip</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            You are about to send {amount || 0} ADA to address. This action cannot be undone.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={handleSubmitSend(onSubmitSend)} disabled={isSubmittingSend}>
-                                            {isSubmittingSend ? "Sending..." : "Confirm Tip"}
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </motion.div>
-                    </div>
-                </form>
-            )}
+                                    {isSubmittingSend ? "Sending..." : "Send Tip"}
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Confirm Tip</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        You are about to send {amount || 0} ADA to address. This action cannot be undone.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleSubmitSend(onSubmitDeposit)} disabled={isSubmittingSend}>
+                                        {isSubmittingSend ? "Sending..." : "Confirm Tip"}
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </motion.div>
+                </div>
+            </form>
         </motion.div>
     );
 };

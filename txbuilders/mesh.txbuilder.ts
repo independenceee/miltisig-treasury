@@ -40,7 +40,7 @@ export class MeshTxBuilder extends MeshAdapter {
             .requiredSignerHash(deserializeAddress(walletAddress).pubKeyHash)
             .txInCollateral(collateral.input.txHash, collateral.input.outputIndex)
             .setNetwork(APP_NETWORK);
-            
+
         return await unsignedTx.complete();
     };
 

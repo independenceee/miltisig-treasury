@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "lucide-react";
 import Image from "next/image";
-import { images } from "@/public/images*";
+import { images } from "@/public/images";
 export default function Loading() {
     return (
         <main className="relative pt-20">

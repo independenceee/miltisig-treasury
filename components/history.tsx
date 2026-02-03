@@ -4,38 +4,17 @@ import { memo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight } from "./icons";
 import { useQuery } from "@tanstack/react-query";
-import { getWithdraws } from "@/services/treasury";
+import { getHistories } from "@/services/treasury";
 import Pagination from "./pagination";
+import CountUp from "react-countup";
 
-// Define types for type safety
-type Withdraw = {
-    type: "Withdraw";
-    status: "Complete";
-    datetime: number;
-    txHash: string;
-    address: string;
-    amount: string | null;
-};
-
-// Animation variants for table rows
-const rowVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
-};
-
-// Animation variants for loading/error/empty states
-const stateVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
-};
-
-const Withdraw = function ({ name, threshold, allowance }: { name: string; threshold: number, allowance: number }) {
+const History = function ({ name, threshold, allowance }: { name: string; threshold: number; allowance: number }) {
     const [page, setPage] = useState(1);
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ["withdraw", name, page],
+        queryKey: ["history", name, page],
         queryFn: () =>
-            getWithdraws({
+            getHistories({
                 threshold: threshold,
                 allowance: allowance,
                 name: name,
@@ -43,23 +22,6 @@ const Withdraw = function ({ name, threshold, allowance }: { name: string; thres
                 limit: 6,
             }),
     });
-
-    // Format lovelace to ADA (1 ADA = 1,000,000 lovelace)
-    const formatAmount = (amount: string | null): string => {
-        if (!amount) return "0.00 ADA";
-        return `${(parseInt(amount) / 1_000_000).toFixed(2)} ADA`;
-    };
-
-    // Format timestamp to readable date (e.g., "12/09/2025 12:06")
-    const formatDate = (timestamp: number): string => {
-        return new Date(timestamp * 1000).toLocaleString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    };
 
     return (
         <motion.div
@@ -172,9 +134,9 @@ const Withdraw = function ({ name, threshold, allowance }: { name: string; thres
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200 dark:bg-slate-900 dark:divide-gray-700">
-                                        {data.data.map((withdraw, index) => (
+                                        {data.data.map((history, index) => (
                                             <motion.tr
-                                                key={withdraw.txHash}
+                                                key={history.txHash}
                                                 className="hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors duration-200"
                                                 variants={{
                                                     hidden: { opacity: 0, x: -10 },
@@ -184,27 +146,25 @@ const Withdraw = function ({ name, threshold, allowance }: { name: string; thres
                                                 animate="visible"
                                                 transition={{ delay: index * 0.1 }}
                                             >
-                                                <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-                                                    {formatDate(withdraw.datetime)}
-                                                </td>
+                                                <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{history.timestamp}</td>
                                                 <td className="px-4 py-3">
                                                     <motion.a
-                                                        href={`https://explorer.cardano-testnet.iohkdev.io/en/transaction?id=${withdraw.txHash}`}
+                                                        href={`https://explorer.cardano-testnet.iohkdev.io/en/transaction?id=${history.txHash}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 font-mono text-sm truncate max-w-[120px] sm:max-w-[180px] block"
-                                                        title={withdraw.txHash}
+                                                        title={history.txHash}
                                                         whileHover={{ scale: 1.05 }}
                                                         transition={{ type: "spring", stiffness: 200 }}
                                                     >
-                                                        {withdraw.txHash.slice(0, 6)}...{withdraw.txHash.slice(-6)}
+                                                        {history.txHash.slice(0, 6)}...{history.txHash.slice(-6)}
                                                     </motion.a>
                                                 </td>
                                                 <td className="px-4 py-3 text-center text-sm font-semibold text-green-600 dark:text-green-400">
-                                                    {formatAmount(withdraw.amount)}
+                                                    <CountUp end={history.change} duration={1} separator="," decimals={6} /> ADA
                                                 </td>
-                                                <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300">{withdraw.type}</td>
-                                                <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300">{withdraw.status}</td>
+                                                <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300">{history.signers}</td>
+                                                <td className="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300">{history.action}</td>
                                             </motion.tr>
                                         ))}
                                     </tbody>
@@ -228,4 +188,4 @@ const Withdraw = function ({ name, threshold, allowance }: { name: string; thres
     );
 };
 
-export default memo(Withdraw);
+export default memo(History);

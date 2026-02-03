@@ -1,16 +1,35 @@
 "use client";
 
 import Info from "@/components/info";
-import Recent from "@/components/recent";
 import FormTip from "@/components/form-tip";
 import { useParams } from "next/navigation";
 import Status from "@/components/status";
-import Withdraw from "@/components/withdraw";
 
 import { useQuery } from "@tanstack/react-query";
-
+import { getTreasury } from "@/services/treasury";
+import History from "@/components/history";
+import Signature from "@/components/signature";
+import { useWallet } from "@/hooks/use-wallet";
 export default function Page() {
     const params = useParams();
+    const { address } = useWallet();
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ["treasury", params.id],
+        queryFn: async () => await getTreasury({ id: params.id as string }),
+    });
+
+    if (error) {
+        return (
+            <aside className="container mx-auto py-8 px-4 pt-24">
+                <div className="max-w-7xl mx-auto space-y-6 px-4 py-8">
+                    <section className="w-full mb-6">
+                        <Status title="Error Loading Treasury" loading={false} data={error.message} />
+                    </section>
+                </div>
+            </aside>
+        );
+    }
 
     return (
         <aside className="container mx-auto py-8 px-4 pt-24">
@@ -25,17 +44,30 @@ export default function Page() {
 
                 <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-6 flex flex-col">
-                        {/* <FormTip tipAddress={params.id as string} /> */}
-                        {/* <Info link={`https://tipjar.cardano2vn.io/tipper/${params.id}`} /> */}
+                        <FormTip
+                            isLoading={isLoading}
+                            allowance={data?.allowance as number}
+                            threshold={data?.threshold as number}
+                            title={data?.title || ""}
+                            value={data?.value as number}
+                        />
+                        <Info link={`https://multisig-treasury.cardano2vn.io/treasury/${params.id}`} />
                     </div>
                     <div className="space-y-6 flex flex-col">
-
-                        {/* <Recent walletAddress={params.address as string} /> */}
+                        <Signature
+                            walletAddress={address || ""}
+                            signers={data?.signers || []}
+                            owners={data?.owners || []}
+                            isLoading={isLoading}
+                            threshold={data?.threshold || 0}
+                            allowance={data?.allowance || 0}
+                            title={data?.title || ""}
+                        />
                     </div>
                 </section>
 
                 <div className="w-full">
-                    <Withdraw walletAddress={params.address as string} />
+                    <History name={data?.title as string} threshold={data?.threshold || 0} allowance={data?.allowance || 0} />
                 </div>
             </div>
         </aside>
