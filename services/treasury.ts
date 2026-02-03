@@ -7,9 +7,10 @@ import { blockfrostFetcher, blockfrostProvider } from "@/providers/cardano";
 import { MeshTxBuilder } from "@/txbuilders/mesh.txbuilder";
 import { MeshWallet, stringToHex } from "@meshsdk/core";
 
-export async function getTreasuries({ page = 1, limit = 12 }: { page?: number; limit?: number }) {
+export async function getTreasuries({ page = 1, limit = 12, owner }: { page?: number; limit?: number; owner?: string }) {
     const skip = (page - 1) * limit;
     const treasuries = await prisma.treasury.findMany({
+        where: owner ? { owner } : undefined,
         skip,
         take: limit,
         orderBy: {
@@ -64,11 +65,13 @@ export async function createTreasury({
     allowance,
     threshold,
     description,
+    owner,
 }: {
     name: string;
     allowance: number;
     image: string;
     threshold: number;
+    owner: string;
     description: string;
 }) {
     await prisma.treasury.create({
@@ -78,6 +81,7 @@ export async function createTreasury({
             threshold: threshold,
             image: image,
             description: description,
+            owner: owner,
         },
     });
 }

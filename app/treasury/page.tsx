@@ -9,7 +9,6 @@ import Treasury from "@/components/treasury";
 import Title from "@/components/title";
 import TipperSkeleton from "@/components/treasury-skeleton";
 import Pagination from "@/components/pagination";
-import { useWallet } from "@/hooks/use-wallet";
 import { getTreasuries } from "@/services/treasury";
 import { routers } from "@/constants/routers";
 import { images } from "@/public/images";
@@ -17,10 +16,9 @@ import { toast } from "sonner";
 
 export default function Page() {
     const [page, setPage] = useState(1);
-    const { address } = useWallet();
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ["treasuries", page, address],
+        queryKey: ["treasuries", page],
         queryFn: async () => await getTreasuries({ limit: 12, page }),
     });
 

@@ -192,3 +192,40 @@ export const signature = async function ({
 
     return unsignedTx;
 };
+
+export const withdraw = async function ({
+    walletAddress,
+    threshold,
+    allowance,
+    title,
+    amount,
+}: {
+    walletAddress: string;
+    threshold: number;
+    allowance: number;
+    title: string;
+    amount: number;
+}) {
+    const meshWallet = new MeshWallet({
+        networkId: APP_NETWORK_ID,
+        fetcher: blockfrostProvider,
+        submitter: blockfrostProvider,
+        key: {
+            type: "address",
+            address: walletAddress,
+        },
+    });
+
+    const meshTxBuilder = new MeshTxBuilder({
+        meshWallet: meshWallet,
+        threshold: threshold,
+        allowance: allowance,
+        name: title,
+    });
+
+    const unsignedTx = await meshTxBuilder.execute({
+        amount: String(amount * DECIMAL_PLACE),
+    });
+
+    return unsignedTx;
+};

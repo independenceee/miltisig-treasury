@@ -10,6 +10,7 @@ import { getTreasury } from "@/services/treasury";
 import History from "@/components/history";
 import Signature from "@/components/signature";
 import { useWallet } from "@/hooks/use-wallet";
+import { DECIMAL_PLACE } from "@/constants/common.constant";
 export default function Page() {
     const params = useParams();
     const { address } = useWallet();
@@ -24,7 +25,15 @@ export default function Page() {
             <aside className="container mx-auto py-8 px-4 pt-24">
                 <div className="max-w-7xl mx-auto space-y-6 px-4 py-8">
                     <section className="w-full mb-6">
-                        <Status title="Error Loading Treasury" loading={false} data={error.message} />
+                        <Status
+                            title="Error Loading Treasury"
+                            loading={false}
+                            allowance={0}
+                            threshold={1}
+                            signers={[]}
+                            name=""
+                            address={address || ""}
+                        />
                     </section>
                 </div>
             </aside>
@@ -38,7 +47,11 @@ export default function Page() {
                     <Status
                         title="There is now a head available for you to access and below is the current state of your head"
                         loading={false}
-                        data={"Deposit" as string}
+                        name={data?.title || ""}
+                        threshold={data?.threshold || 1}
+                        signers={data?.signers || []}
+                        allowance={Number(data?.allowance) / DECIMAL_PLACE}
+                        address={address || ""}
                     />
                 </section>
 

@@ -2,6 +2,7 @@
 CREATE TABLE "Treasury" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
+    "owner" TEXT NOT NULL DEFAULT '',
     "image" TEXT NOT NULL,
     "threshold" INTEGER NOT NULL,
     "allowance" INTEGER NOT NULL,
